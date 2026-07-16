@@ -38,19 +38,19 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<List<ProjectDto>> getMyProjects() {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(projectService.getUserAllProject(email), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProjectDto> getProjectById(@PathVariable Long id) {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(projectService.getUserProjectById(id, email), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto projectDto) {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(projectService.createProject(email, projectDto), HttpStatus.CREATED);
     }
 
@@ -58,13 +58,13 @@ public class ProjectController {
     public ResponseEntity<ProjectDto> updateProject(
             @PathVariable Long id,
             @RequestBody ProjectDto projectDto) {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(projectService.updateProject(email, id, projectDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(projectService.deleteProject(email, id), HttpStatus.NO_CONTENT);
     }
 }

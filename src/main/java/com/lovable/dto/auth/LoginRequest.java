@@ -19,6 +19,8 @@ package com.lovable.dto.auth;
  *
  */
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.io.Serializable;
@@ -29,4 +31,11 @@ import java.io.Serializable;
 @Setter
 @Data
 public class LoginRequest implements Serializable {
+    @NotBlank(message = "Email cannot be blank")
+    @Size(max = 100, message = "Email cannot exceed 100 characters")
+    private String email;
+
+    @NotBlank(message = "Password cannot be blank")
+    @Size(max = 100, message = "Password cannot exceed 100 characters")
+    private String password;
 }

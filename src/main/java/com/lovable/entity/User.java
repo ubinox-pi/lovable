@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,20 +38,32 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "users")
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String passwordHash;
 
     private String avatarUrl;
+
+    @OneToMany(
+            mappedBy = "owner",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    @Builder.Default
+    private List<Project> projects = new ArrayList<>();
 
     @CreationTimestamp
     @Column(updatable = false)

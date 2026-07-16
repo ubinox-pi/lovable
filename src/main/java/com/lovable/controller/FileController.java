@@ -40,7 +40,7 @@ public class FileController {
 
     @GetMapping
     public ResponseEntity<FileTreeResponse> getFileTree(@PathVariable Long projectId) {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(fileService.getFileTree(email, projectId), HttpStatus.OK);
     }
 
@@ -49,7 +49,7 @@ public class FileController {
             @PathVariable Long projectId,
             @PathVariable String path
     ) {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity(fileService.getFileContent(email, projectId, path), HttpStatus.OK);
     }
 }

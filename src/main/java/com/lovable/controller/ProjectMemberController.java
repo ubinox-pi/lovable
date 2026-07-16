@@ -40,7 +40,7 @@ public class ProjectMemberController {
 
     @GetMapping
     public ResponseEntity<List<MemberResponse>> getProjectMembers(@PathVariable Long projectId) {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(projectMemberService.getProjectMembers(email, projectId), HttpStatus.OK);
     }
 
@@ -49,7 +49,7 @@ public class ProjectMemberController {
             @PathVariable Long projectId,
             @RequestBody InviteMemberRequest inviteMemberRequest
     ) {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(projectMemberService.inviteMember(email, projectId, inviteMemberRequest), HttpStatus.CREATED);
     }
 
@@ -59,7 +59,7 @@ public class ProjectMemberController {
             @PathVariable Long memberId,
             @RequestBody UpdateMemberRoleRequest updateMemberRoleRequest
     ) {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(projectMemberService.updateMemberRole(email, projectId, memberId, updateMemberRoleRequest), HttpStatus.OK);
     }
 
@@ -68,7 +68,7 @@ public class ProjectMemberController {
             @PathVariable Long projectId,
             @PathVariable Long memberId
     ) {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(projectMemberService.removeMember(email, projectId, memberId), HttpStatus.NO_CONTENT);
     }
 }

@@ -1,10 +1,4 @@
-package com.lovable.service.impls;
-
-import com.lovable.dto.auth.UserDto;
-import com.lovable.service.UserService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+package com.lovable.mapper;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -12,9 +6,9 @@ import org.springframework.stereotype.Service;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.service.impls
- * Created by: Ashish Kushwaha on 10-07-2026 16:58
- * File: UserServiceImplV1
+ * Package: com.lovable.mapper
+ * Created by: Ashish Kushwaha on 16-07-2026 14:10
+ * File: ProjectMapper
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,12 +19,13 @@ import org.springframework.stereotype.Service;
  *
  */
 
-@Service
-@Slf4j
-@RequiredArgsConstructor
-public class UserServiceImplV1 implements UserService {
-    @Override
-    public UserDto getMe(String email) {
-        return null;
-    }
+import com.lovable.dto.project.ProjectDto;
+import com.lovable.entity.Project;
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface ProjectMapper {
+
+    ProjectDto toProjectDto(Project project);
+
 }

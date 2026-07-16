@@ -1,10 +1,4 @@
-package com.lovable.service;
-
-import com.lovable.dto.auth.LoginRequest;
-import com.lovable.dto.auth.UserDto;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
+package com.lovable.mapper;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -12,9 +6,9 @@ import jakarta.validation.Valid;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.service
- * Created by: Ashish Kushwaha on 10-07-2026 14:58
- * File: AuthServiceImplV1
+ * Package: com.lovable.mapper
+ * Created by: Ashish Kushwaha on 16-07-2026 14:16
+ * File: UserMapper
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,8 +18,14 @@ import jakarta.validation.Valid;
  *   - Commercial use is strictly prohibited.
  *
  */
-public interface AuthService {
-    UserDto signup(@Valid UserDto userDto);
 
-    Void login(@Valid LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response);
+import com.lovable.dto.auth.UserDto;
+import com.lovable.entity.User;
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface UserMapper {
+    UserDto toUserDto(User user);
+
+    User toUser(UserDto userDto);
 }

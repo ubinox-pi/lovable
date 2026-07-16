@@ -38,9 +38,11 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
     @Builder.Default

@@ -49,19 +49,19 @@ public class BillingController {
 
     @GetMapping("/me/subscription")
     public ResponseEntity<SubscriptionResponse> getMySubscription() {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(subscriptionService.getCurrentSubscription(email), HttpStatus.OK);
     }
 
     @PostMapping("/checkout")
     public ResponseEntity<CheckoutResponse> createCheckoutResponse(@RequestBody CheckoutRequest checkoutRequest) {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(subscriptionService.createCheckoutSession(email, checkoutRequest), HttpStatus.OK);
     }
 
     @PostMapping("/portal")
     public ResponseEntity<PortalResponse> openCustomerPortal() {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(subscriptionService.openCustomerPortal(email), HttpStatus.OK);
     }
 }

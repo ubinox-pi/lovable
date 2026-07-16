@@ -1,10 +1,10 @@
-package com.lovable.service;
+package com.lovable.repository;
 
-import com.lovable.dto.auth.LoginRequest;
-import com.lovable.dto.auth.UserDto;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
+import com.lovable.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -12,9 +12,9 @@ import jakarta.validation.Valid;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.service
- * Created by: Ashish Kushwaha on 10-07-2026 14:58
- * File: AuthServiceImplV1
+ * Package: com.lovable.repository
+ * Created by: Ashish Kushwaha on 16-07-2026 13:57
+ * File: UserRepository
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,8 +24,10 @@ import jakarta.validation.Valid;
  *   - Commercial use is strictly prohibited.
  *
  */
-public interface AuthService {
-    UserDto signup(@Valid UserDto userDto);
 
-    Void login(@Valid LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response);
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

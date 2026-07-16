@@ -24,6 +24,8 @@ import com.lovable.dto.auth.UserDto;
 import com.lovable.service.AuthService;
 import com.lovable.service.UserService;
 import com.lovable.util.AppUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -44,13 +46,17 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> loginRequest(@Valid @RequestBody LoginRequest loginRequest) {
-        return new ResponseEntity<>(authService.login(loginRequest), HttpStatus.OK);
+    public ResponseEntity<Void> loginRequest(
+            @Valid @RequestBody LoginRequest loginRequest,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        return new ResponseEntity<>(authService.login(loginRequest, request, response), HttpStatus.OK);
     }
 
     @GetMapping("/me")
     public ResponseEntity<UserDto> getMe() {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(userService.getMe(email), HttpStatus.CREATED);
     }
 }

@@ -1,7 +1,11 @@
 package com.lovable.util;
 
-import com.lovable.UnAuthorisedException;
+import com.lovable.entity.User;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -21,12 +25,32 @@ import org.springframework.security.core.context.SecurityContextHolder;
  *   - Commercial use is strictly prohibited.
  *
  */
+
+@Component
 public class AppUtils {
 
-    public static String getUserEmail() {
-        if (SecurityContextHolder.getContext().getAuthentication() != null) {
-            return SecurityContextHolder.getContext().getAuthentication().getName();
+    public static String getCurrentUserEmail() {
+        return getCurrentUser().getEmail();
+    }
+
+    public static User getCurrentUser() {
+
+        Authentication authentication =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        if (authentication == null
+                || !authentication.isAuthenticated()
+                || authentication instanceof AnonymousAuthenticationToken) {
+
+            throw new AccessDeniedException("User is not authenticated");
         }
-        throw new UnAuthorisedException("User is not authenticated");
+
+        return (User) authentication.getPrincipal();
+    }
+
+    public static Long getCurrentUserId() {
+        return getCurrentUser().getId();
     }
 }

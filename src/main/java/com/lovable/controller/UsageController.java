@@ -39,13 +39,13 @@ public class UsageController {
 
     @GetMapping("/today")
     public ResponseEntity<UsageTodayResponse> getTodayUsage() {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(usageService.getTodayUsage(email), HttpStatus.OK);
     }
 
     @GetMapping("/limits")
     public ResponseEntity<PLanLimitsResponse> getPLanLimits() {
-        String email = AppUtils.getUserEmail();
+        String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(usageService.getPlanLimits(email), HttpStatus.OK);
     }
 }
