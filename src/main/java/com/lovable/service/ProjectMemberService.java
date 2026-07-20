@@ -31,5 +31,5 @@ public interface ProjectMemberService {
 
     MemberResponse updateMemberRole(String email, Long projectId, Long memberId, UpdateMemberRoleRequest updateMemberRoleRequest);
 
-    MemberResponse removeMember(String email, Long projectId, Long memberId);
+    Void removeMember(String email, Long projectId, Long memberId);
 }

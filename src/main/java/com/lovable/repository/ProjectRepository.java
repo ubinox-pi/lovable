@@ -41,9 +41,10 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Query("""
             SELECT p FROM Project p
-            WHERE p.deletedAt IS NULL
-            AND p.id = :projectId
+            LEFT JOIN FETCH p.owner
+            WHERE p.id = :projectId
+            AND p.deletedAt IS NULL
             AND p.owner.email = :email
             """)
-    Optional<Project> findByProjectIdAndUserEmail(Long projectId, String email);
+    Optional<Project> findAccessibleProjectById(String email, Long projectId);
 }

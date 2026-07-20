@@ -1,4 +1,4 @@
-package com.lovable.enums;
+package com.lovable.dto;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -6,9 +6,9 @@ package com.lovable.enums;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.enums
- * Created by: Ashish Kushwaha on 08-07-2026 22:27
- * File: ProjectRole
+ * Package: com.lovable.dto
+ * Created by: Ashish Kushwaha on 20-07-2026 23:28
+ * File: ApiResponse
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -18,8 +18,15 @@ package com.lovable.enums;
  *   - Commercial use is strictly prohibited.
  *
  */
-public enum ProjectRole {
-    EDITOR,
-    VIEWER,
-    OWNER
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class ApiResponse {
 }

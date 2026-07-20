@@ -18,7 +18,39 @@ package com.lovable.entity;
  *   - Commercial use is strictly prohibited.
  *
  */
+
+import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.proxy.HibernateProxy;
+
+import java.util.Objects;
+
+@Embeddable
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProjectMemberId {
     private Long projectId;
     private Long userId;
+
+    @Override
+    public final int hashCode() {
+        return Objects.hash(projectId, userId);
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        ProjectMemberId that = (ProjectMemberId) o;
+        return getProjectId() != null && Objects.equals(getProjectId(), that.getProjectId())
+                && getUserId() != null && Objects.equals(getUserId(), that.getUserId());
+    }
 }

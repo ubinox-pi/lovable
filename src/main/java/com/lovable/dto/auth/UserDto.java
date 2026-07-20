@@ -34,6 +34,7 @@ public class UserDto implements Serializable {
 
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[a-zA-Z\\d@$!%*?&]{8,}$",
             message = "Password must be at least 8 characters and contain uppercase, lowercase, digit, and special character")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotBlank(message = "Password cannot be blank")
     String passwordHash;
 

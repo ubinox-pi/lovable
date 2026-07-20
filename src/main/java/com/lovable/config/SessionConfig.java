@@ -29,8 +29,6 @@ import org.springframework.session.SaveMode;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @EnableRedisHttpSession(
-        maxInactiveIntervalInSeconds = 60 * 60 * 24 * 7,
-        redisNamespace = "CONVO_SESSION",
         flushMode = FlushMode.ON_SAVE,
         saveMode = SaveMode.ON_SET_ATTRIBUTE
 )

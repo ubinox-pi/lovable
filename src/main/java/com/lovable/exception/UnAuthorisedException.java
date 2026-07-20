@@ -1,4 +1,4 @@
-package com.lovable.enums;
+package com.lovable.exception;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -6,9 +6,9 @@ package com.lovable.enums;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.enums
- * Created by: Ashish Kushwaha on 08-07-2026 22:27
- * File: ProjectRole
+ * Package: com.lovable
+ * Created by: Ashish Kushwaha on 11-07-2026 18:34
+ * File: UnAuthorisedException
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -18,8 +18,8 @@ package com.lovable.enums;
  *   - Commercial use is strictly prohibited.
  *
  */
-public enum ProjectRole {
-    EDITOR,
-    VIEWER,
-    OWNER
+public class UnAuthorisedException extends RuntimeException {
+    public UnAuthorisedException(String message) {
+        super(message);
+    }
 }

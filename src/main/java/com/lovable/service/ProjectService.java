@@ -25,11 +25,11 @@ import java.util.List;
 public interface ProjectService {
     List<ProjectDto> getUserAllProject(String email);
 
-    ProjectDto getUserProjectById(Long id, String email);
+    ProjectDto getUserProjectById(String email, Long projectId);
 
     ProjectDto createProject(String email, ProjectDto projectDto);
 
-    ProjectDto updateProject(String email, Long id, ProjectDto projectDto);
+    ProjectDto updateProject(String email, Long projectId, ProjectDto projectDto);
 
-    Void deleteProject(String email, Long id);
+    Void deleteProject(String email, Long projectId);
 }

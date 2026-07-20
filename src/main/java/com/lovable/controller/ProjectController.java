@@ -22,6 +22,7 @@ package com.lovable.controller;
 import com.lovable.dto.project.ProjectDto;
 import com.lovable.service.ProjectService;
 import com.lovable.util.AppUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,29 +43,30 @@ public class ProjectController {
         return new ResponseEntity<>(projectService.getUserAllProject(email), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ProjectDto> getProjectById(@PathVariable Long id) {
+    @GetMapping("/{projectId}")
+    public ResponseEntity<ProjectDto> getProjectById(@PathVariable Long projectId) {
         String email = AppUtils.getCurrentUserEmail();
-        return new ResponseEntity<>(projectService.getUserProjectById(id, email), HttpStatus.OK);
+        return new ResponseEntity<>(projectService.getUserProjectById(email, projectId), HttpStatus.OK);
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<ProjectDto> createProject(@RequestBody ProjectDto projectDto) {
         String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(projectService.createProject(email, projectDto), HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{projectId}")
     public ResponseEntity<ProjectDto> updateProject(
-            @PathVariable Long id,
+            @PathVariable Long projectId,
             @RequestBody ProjectDto projectDto) {
         String email = AppUtils.getCurrentUserEmail();
-        return new ResponseEntity<>(projectService.updateProject(email, id, projectDto), HttpStatus.OK);
+        return new ResponseEntity<>(projectService.updateProject(email, projectId, projectDto), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
+    @DeleteMapping("/{projectId}")
+    public ResponseEntity<Void> deleteProject(@PathVariable Long projectId) {
         String email = AppUtils.getCurrentUserEmail();
-        return new ResponseEntity<>(projectService.deleteProject(email, id), HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(projectService.deleteProject(email, projectId), HttpStatus.NO_CONTENT);
     }
 }

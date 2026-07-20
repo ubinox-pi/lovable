@@ -11,6 +11,7 @@ import com.lovable.repository.UserRepository;
 import com.lovable.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ import java.util.List;
  * Project: lovable
  * Package: com.lovable.service.impls
  * Created by: Ashish Kushwaha on 10-07-2026 17:10
- * File: ProjectServiceImplV1
+ * File: ProjectServiceV1Impl
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -38,7 +39,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ProjectServiceImplV1 implements ProjectService {
+public class ProjectServiceV1Impl implements ProjectService {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
@@ -54,10 +55,9 @@ public class ProjectServiceImplV1 implements ProjectService {
     }
 
     @Override
-    public ProjectDto getUserProjectById(Long id, String email) {
-        log.info("Getting project with id: {} for user with email: {}", id, email);
-        return projectMapper.toProjectDto(projectRepository.findByProjectIdAndUserEmail(id, email)
-                .orElseThrow(() -> new ProjectNotFoundException("Project with id " + id + " not found for user with email " + email)));
+    public ProjectDto getUserProjectById(String email, Long projectId) {
+        log.info("Getting project with id: {} for user with email: {}", projectId, email);
+        return projectMapper.toProjectDto(getAccessibleProject(email, projectId));
     }
 
     @Override
@@ -76,10 +76,13 @@ public class ProjectServiceImplV1 implements ProjectService {
     }
 
     @Override
-    public ProjectDto updateProject(String email, Long id, ProjectDto projectDto) {
-        log.info("Updating project with id: {} for user with email: {}", id, email);
-        Project project = projectRepository.findByProjectIdAndUserEmail(id, email)
-                .orElseThrow(() -> new ProjectNotFoundException("Project with id " + id + " not found for user with email " + email));
+    public ProjectDto updateProject(String email, Long projectId, ProjectDto projectDto) {
+        log.info("Updating project with id: {} for user with email: {}", projectId, email);
+        Project project = getAccessibleProject(email, projectId);
+
+        if (!project.getOwner().getEmail().equals(email)) {
+            throw new AccessDeniedException("Only owner can update project");
+        }
 
         project.setName(projectDto.getName());
         project = projectRepository.save(project);
@@ -87,12 +90,24 @@ public class ProjectServiceImplV1 implements ProjectService {
     }
 
     @Override
-    public Void deleteProject(String email, Long id) {
-        log.info("Deleting project with id: {} for user with email: {}", id, email);
-        Project project = projectRepository.findByProjectIdAndUserEmail(id, email)
-                .orElseThrow(() -> new ProjectNotFoundException("Project with id " + id + " not found for user with email " + email));
+    public Void deleteProject(String email, Long projectId) {
+        log.info("Deleting project with id: {} for user with email: {}", projectId, email);
+        Project project = getAccessibleProject(email, projectId);
+
+        if (!project.getOwner().getEmail().equals(email)) {
+            throw new AccessDeniedException("Only owner can delete project");
+        }
+
         project.setDeletedAt(LocalDateTime.now());
         projectRepository.save(project);
         return null;
+    }
+
+    private Project getAccessibleProject(String email, Long projectId) {
+        return projectRepository.findAccessibleProjectById(email, projectId)
+                .orElseThrow(
+                        () -> new ProjectNotFoundException(
+                                "Project with id " + projectId + " not found for user with email " + email
+                        ));
     }
 }

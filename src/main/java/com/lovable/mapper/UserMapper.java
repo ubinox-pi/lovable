@@ -22,10 +22,12 @@ package com.lovable.mapper;
 import com.lovable.dto.auth.UserDto;
 import com.lovable.entity.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     UserDto toUserDto(User user);
 
+    @Mapping(target = "projects", ignore = true)
     User toUser(UserDto userDto);
 }

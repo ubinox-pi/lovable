@@ -59,10 +59,11 @@ public class AuthServiceImplV1 implements AuthService {
         log.info("Signing up user: {}", userDto.getEmail());
 
         if (userRepository.existsByEmail(userDto.getEmail())) {
-            throw new RuntimeException("User with email " + userDto.getEmail() + " already exists");
+            throw new IllegalArgumentException("User with email " + userDto.getEmail() + " already exists");
         }
 
         User user = userMapper.toUser(userDto);
+        user.setPasswordHash(passwordEncoder.encode(userDto.getPasswordHash()));
         user = userRepository.save(user);
 
         return userMapper.toUserDto(user);

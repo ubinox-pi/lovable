@@ -45,6 +45,7 @@ public class Plan {
 
     private Integer maxPreviews;
 
+    @Builder.Default
     private Boolean unlimitedAi = false;
 
     private Boolean isActive;

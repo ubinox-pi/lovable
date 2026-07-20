@@ -1,4 +1,11 @@
-package com.lovable.enums;
+package com.lovable.repository;
+
+import com.lovable.entity.ProjectMember;
+import com.lovable.entity.ProjectMemberId;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -6,9 +13,9 @@ package com.lovable.enums;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.enums
- * Created by: Ashish Kushwaha on 08-07-2026 22:27
- * File: ProjectRole
+ * Package: com.lovable.repository
+ * Created by: Ashish Kushwaha on 16-07-2026 21:06
+ * File: ProjectMemberRepository
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -18,8 +25,9 @@ package com.lovable.enums;
  *   - Commercial use is strictly prohibited.
  *
  */
-public enum ProjectRole {
-    EDITOR,
-    VIEWER,
-    OWNER
+
+@Repository
+public interface ProjectMemberRepository extends JpaRepository<ProjectMember, ProjectMemberId> {
+    List<ProjectMember> findByIdProjectId(Long idProjectId);
+
 }

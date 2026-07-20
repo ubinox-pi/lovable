@@ -1,4 +1,4 @@
-package com.lovable.enums;
+package com.lovable.service;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -6,9 +6,9 @@ package com.lovable.enums;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.enums
- * Created by: Ashish Kushwaha on 08-07-2026 22:27
- * File: ProjectRole
+ * Package: com.lovable.service
+ * Created by: Ashish Kushwaha on 17-07-2026 16:45
+ * File: NotificationService
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -18,8 +18,6 @@ package com.lovable.enums;
  *   - Commercial use is strictly prohibited.
  *
  */
-public enum ProjectRole {
-    EDITOR,
-    VIEWER,
-    OWNER
+public interface NotificationService {
+    void sendNotification(String recipient, String message);
 }
