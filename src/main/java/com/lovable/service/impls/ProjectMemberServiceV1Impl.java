@@ -26,8 +26,10 @@ import com.lovable.entity.Project;
 import com.lovable.entity.ProjectMember;
 import com.lovable.entity.ProjectMemberId;
 import com.lovable.entity.User;
-import com.lovable.exception.ProjectNotFoundException;
-import com.lovable.exception.UserNotFoundException;
+import com.lovable.exception.custom.AlreadyExistsException;
+import com.lovable.exception.custom.BadRequestException;
+import com.lovable.exception.custom.ResourceNotFoundException;
+import com.lovable.exception.custom.UnauthorizedException;
 import com.lovable.mapper.ProjectMemberMapper;
 import com.lovable.repository.ProjectMemberRepository;
 import com.lovable.repository.ProjectRepository;
@@ -36,11 +38,9 @@ import com.lovable.service.NotificationService;
 import com.lovable.service.ProjectMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -56,19 +56,10 @@ public class ProjectMemberServiceV1Impl implements ProjectMemberService {
 
     @Override
     public List<MemberResponse> getProjectMembers(String email, Long projectId) {
-        Project project = getAccessibleProject(email, projectId);
-
-        List<MemberResponse> memberResponseList = new ArrayList<>();
-        memberResponseList.add(projectMemberMapper.toMemberResponseFromUser(project.getOwner()));
-
-        memberResponseList.addAll(
-                projectMemberRepository.findByIdProjectId(projectId)
-                        .stream()
-                        .map(projectMemberMapper::toMemberResponse)
-                        .toList()
-        );
-
-        return memberResponseList;
+        return projectMemberRepository.findByIdProjectId(projectId)
+                .stream()
+                .map(projectMemberMapper::toMemberResponse)
+                .toList();
     }
 
     @Override
@@ -76,20 +67,20 @@ public class ProjectMemberServiceV1Impl implements ProjectMemberService {
         Project project = getAccessibleProject(email, projectId);
 
         if (!project.getOwner().getEmail().equals(email)) {
-            throw new AccessDeniedException("Only owner can invite member");
+            throw new UnauthorizedException("Only owner can invite member");
         }
 
-        User invitee = userRepository.findByEmail(inviteMemberRequest.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("User with email " + inviteMemberRequest.getEmail() + " not found"));
+        User invitee = userRepository.findByUniqueUsername(inviteMemberRequest.getUniqueUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User with username " + inviteMemberRequest.getUniqueUsername() + " not found"));
 
         if (invitee.equals(project.getOwner())) {
-            throw new IllegalArgumentException("Owner cannot be invited as a member");
+            throw new BadRequestException("Owner cannot be invited as a member");
         }
 
         ProjectMemberId projectMemberId = new ProjectMemberId(projectId, invitee.getId());
 
         if (projectMemberRepository.existsById(projectMemberId)) {
-            throw new IllegalArgumentException("User %s is already a member of the project".formatted(inviteMemberRequest.getEmail()));
+            throw new AlreadyExistsException("User %s is already a member of the project".formatted(inviteMemberRequest.getUniqueUsername()));
         }
 
         ProjectMember projectMember = ProjectMember.builder()
@@ -100,7 +91,7 @@ public class ProjectMemberServiceV1Impl implements ProjectMemberService {
                 .invitedAt(LocalDateTime.now())
                 .build();
 
-        emailNotificationService.sendNotification(inviteMemberRequest.getEmail(), "You have been invited to join the project: " + project.getName());
+        emailNotificationService.sendNotification(inviteMemberRequest.getUniqueUsername(), "You have been invited to join the project: " + project.getName());
 
         projectMemberRepository.save(projectMember);
         return projectMemberMapper.toMemberResponse(projectMember);
@@ -111,12 +102,12 @@ public class ProjectMemberServiceV1Impl implements ProjectMemberService {
         Project project = getAccessibleProject(email, projectId);
 
         if (!project.getOwner().getEmail().equals(email)) {
-            throw new AccessDeniedException("Only owner can update member role");
+            throw new UnauthorizedException("Only owner can update member role");
         }
 
         ProjectMemberId projectMemberId = new ProjectMemberId(projectId, memberId);
         ProjectMember projectMember = projectMemberRepository.findById(projectMemberId)
-                .orElseThrow(() -> new ProjectNotFoundException("Member with id " + memberId + " not found in project with id " + projectId));
+                .orElseThrow(() -> new ResourceNotFoundException("Member with id " + memberId + " not found in project with id " + projectId));
 
 
         projectMember.setProjectRole(updateMemberRoleRequest.role());
@@ -129,12 +120,12 @@ public class ProjectMemberServiceV1Impl implements ProjectMemberService {
         Project project = getAccessibleProject(email, projectId);
 
         if (!project.getOwner().getEmail().equals(email)) {
-            throw new AccessDeniedException("Only owner can remove member");
+            throw new UnauthorizedException("Only owner can remove member");
         }
 
         ProjectMemberId projectMemberId = new ProjectMemberId(projectId, memberId);
         if (!projectMemberRepository.existsById(projectMemberId)) {
-            throw new IllegalArgumentException("Member with id " + memberId + " not found in project with id " + projectId);
+            throw new ResourceNotFoundException("Member with id " + memberId + " not found in project with id " + projectId);
         }
         projectMemberRepository.deleteById(projectMemberId);
 
@@ -144,7 +135,7 @@ public class ProjectMemberServiceV1Impl implements ProjectMemberService {
     private Project getAccessibleProject(String email, Long projectId) {
         return projectRepository.findAccessibleProjectById(email, projectId)
                 .orElseThrow(
-                        () -> new ProjectNotFoundException(
+                        () -> new ResourceNotFoundException(
                                 "Project with id " + projectId + " not found for user with email " + email
                         ));
     }

@@ -1,4 +1,7 @@
-package com.lovable.exception;
+package com.lovable.exception.custom;
+
+import com.lovable.exception.ApiException;
+import com.lovable.exception.ErrorCode;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -6,9 +9,9 @@ package com.lovable.exception;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable
+ * Package: com.lovable.exception.custom
  * Created by: Ashish Kushwaha on 11-07-2026 18:34
- * File: UnAuthorisedException
+ * File: UnauthorizedException
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -18,8 +21,9 @@ package com.lovable.exception;
  *   - Commercial use is strictly prohibited.
  *
  */
-public class UnAuthorisedException extends RuntimeException {
-    public UnAuthorisedException(String message) {
-        super(message);
+public class UnauthorizedException extends ApiException {
+
+    public UnauthorizedException(String message) {
+        super(ErrorCode.UNAUTHORIZED, message);
     }
 }

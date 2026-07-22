@@ -1,4 +1,7 @@
-package com.lovable.exception;
+package com.lovable.exception.custom;
+
+import com.lovable.exception.ApiException;
+import com.lovable.exception.ErrorCode;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -6,9 +9,9 @@ package com.lovable.exception;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.exception
- * Created by: Ashish Kushwaha on 20-07-2026 22:24
- * File: ProjectMemberNotFoundException
+ * Package: com.lovable.exception.custom
+ * Created by: Ashish Kushwaha on 21-07-2026 00:04
+ * File: ValidationException
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -18,13 +21,9 @@ package com.lovable.exception;
  *   - Commercial use is strictly prohibited.
  *
  */
+public class ValidationException extends ApiException {
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
-public class ProjectMemberNotFoundException extends RuntimeException {
-    public ProjectMemberNotFoundException(String message) {
-        log.error(message);
-        super(message);
+    public ValidationException(String message) {
+        super(ErrorCode.VALIDATION_FAILED, message);
     }
 }

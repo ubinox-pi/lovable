@@ -22,6 +22,7 @@ package com.lovable.service.impls;
 import com.lovable.dto.auth.LoginRequest;
 import com.lovable.dto.auth.UserDto;
 import com.lovable.entity.User;
+import com.lovable.exception.custom.AlreadyExistsException;
 import com.lovable.mapper.UserMapper;
 import com.lovable.repository.UserRepository;
 import com.lovable.service.AuthService;
@@ -59,10 +60,16 @@ public class AuthServiceImplV1 implements AuthService {
         log.info("Signing up user: {}", userDto.getEmail());
 
         if (userRepository.existsByEmail(userDto.getEmail())) {
-            throw new IllegalArgumentException("User with email " + userDto.getEmail() + " already exists");
+            throw new AlreadyExistsException("User with email " + userDto.getEmail() + " already exists");
         }
 
         User user = userMapper.toUser(userDto);
+
+        if (user.getUniqueUsername() == null) {
+            String uniqueUsername = userDto.getEmail().split("@")[0];
+            user.setUniqueUsername(uniqueUsername);
+        }
+
         user.setPasswordHash(passwordEncoder.encode(userDto.getPasswordHash()));
         user = userRepository.save(user);
 

@@ -7,8 +7,8 @@ package com.lovable.exception;
  *
  * Project: lovable
  * Package: com.lovable.exception
- * Created by: Ashish Kushwaha on 16-07-2026 14:00
- * File: UserNotFoundException
+ * Created by: Ashish Kushwaha on 20-07-2026 23:28
+ * File: ApiResponse
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -19,12 +19,36 @@ package com.lovable.exception;
  *
  */
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
-@Slf4j
-public class UserNotFoundException extends RuntimeException {
-    public UserNotFoundException(String message) {
-        log.error(message);
-        super(message);
-    }
+import java.time.Instant;
+import java.util.Map;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class ApiResponse<T> {
+    private boolean success;
+
+    private String code;
+
+    private HttpStatus status;
+
+    private String error;
+
+    private String message;
+
+    private T data;
+
+    private Map<String, String> validationErrors;
+
+    private String path;
+
+    @Builder.Default
+    private Instant timestamp = Instant.now();
 }

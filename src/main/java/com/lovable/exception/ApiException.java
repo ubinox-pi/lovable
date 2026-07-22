@@ -1,4 +1,6 @@
-package com.lovable.dto.subscription;
+package com.lovable.exception;
+
+import lombok.Getter;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -6,9 +8,9 @@ package com.lovable.dto.subscription;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.dto.subscription
- * Created by: Ashish Kushwaha on 15-07-2026 20:00
- * File: CheckoutRequest
+ * Package: com.lovable.exception
+ * Created by: Ashish Kushwaha on 20-07-2026 23:56
+ * File: ApiException
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -18,21 +20,18 @@ package com.lovable.dto.subscription;
  *   - Commercial use is strictly prohibited.
  *
  */
+@Getter
+public class ApiException extends RuntimeException {
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+    private final ErrorCode errorCode;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class CheckoutRequest {
+    public ApiException(ErrorCode errorCode) {
+        super(errorCode.getDefaultMessage());
+        this.errorCode = errorCode;
+    }
 
-    @NotNull(message = "Plan ID cannot be null")
-    @Positive(message = "Plan ID must be a positive value")
-    private Long planId;
+    public ApiException(ErrorCode errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode;
+    }
 }

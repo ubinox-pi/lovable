@@ -21,7 +21,6 @@ package com.lovable.mapper;
 
 import com.lovable.dto.member.MemberResponse;
 import com.lovable.entity.ProjectMember;
-import com.lovable.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -32,17 +31,9 @@ public interface ProjectMemberMapper {
     @Mappings({
             @Mapping(source = "id.userId", target = "userId"),
             @Mapping(source = "user.name", target = "name"),
-            @Mapping(source = "user.email", target = "email"),
-            @Mapping(source = "user.avatarUrl", target = "avatarUrl"),
+            @Mapping(source = "user.uniqueUsername", target = "uniqueUsername"),
             @Mapping(source = "projectRole", target = "role"),
             @Mapping(source = "invitedAt", target = "invitedAt")
     })
     MemberResponse toMemberResponse(ProjectMember projectMember);
-
-    @Mappings({
-            @Mapping(source = "id", target = "userId"),
-            @Mapping(target = "role", constant = "OWNER"),
-            @Mapping(target = "invitedAt", constant = "createdAt")
-    })
-    MemberResponse toMemberResponseFromUser(User user);
 }

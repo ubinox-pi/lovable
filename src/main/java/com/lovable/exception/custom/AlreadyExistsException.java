@@ -1,4 +1,7 @@
-package com.lovable.dto;
+package com.lovable.exception.custom;
+
+import com.lovable.exception.ApiException;
+import com.lovable.exception.ErrorCode;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -6,9 +9,9 @@ package com.lovable.dto;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.dto
- * Created by: Ashish Kushwaha on 20-07-2026 23:28
- * File: ApiResponse
+ * Package: com.lovable.exception.custom
+ * Created by: Ashish Kushwaha on 21-07-2026 00:02
+ * File: AlreadyExistsException
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -18,15 +21,9 @@ package com.lovable.dto;
  *   - Commercial use is strictly prohibited.
  *
  */
+public class AlreadyExistsException extends ApiException {
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class ApiResponse {
+    public AlreadyExistsException(String message) {
+        super(ErrorCode.ALREADY_EXISTS, message);
+    }
 }

@@ -19,9 +19,12 @@ package com.lovable.dto.member;
  *
  */
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lovable.enums.ProjectRole;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,7 +35,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class InviteMemberRequest {
-    private String email;
+
+    @Size(max = 100, message = "Username must not exceed 100 characters")
+    @NotBlank(message = "Username cannot be blank")
+    @JsonProperty("username")
+    private String uniqueUsername;
+
     @Enumerated(EnumType.STRING)
+    @NotBlank(message = "Role cannot be blank")
     private ProjectRole role;
 }

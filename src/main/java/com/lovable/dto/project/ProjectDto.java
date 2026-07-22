@@ -3,6 +3,7 @@ package com.lovable.dto.project;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lovable.dto.auth.UserDto;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class ProjectDto implements Serializable {
     private Long id;
 
     @NotBlank(message = "Name cannot be blank")
+    @Size(max = 200, message = "Name cannot exceed 200 characters")
     private String name;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

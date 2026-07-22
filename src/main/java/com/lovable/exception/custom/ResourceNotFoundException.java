@@ -1,4 +1,4 @@
-package com.lovable.exception;
+package com.lovable.exception.custom;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -6,9 +6,9 @@ package com.lovable.exception;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.exception
- * Created by: Ashish Kushwaha on 16-07-2026 15:53
- * File: ProjectNotFoundException
+ * Package: com.lovable.exception.custom
+ * Created by: Ashish Kushwaha on 20-07-2026 23:51
+ * File: ResourceNotFoundException
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -19,12 +19,14 @@ package com.lovable.exception;
  *
  */
 
+import com.lovable.exception.ApiException;
+import com.lovable.exception.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ProjectNotFoundException extends RuntimeException {
-    public ProjectNotFoundException(String message) {
+public class ResourceNotFoundException extends ApiException {
+    public ResourceNotFoundException(String message) {
+        super(ErrorCode.RESOURCE_NOT_FOUND, message);
         log.error(message);
-        super(message);
     }
 }

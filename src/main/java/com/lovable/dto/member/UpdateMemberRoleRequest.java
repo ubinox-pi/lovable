@@ -3,6 +3,7 @@ package com.lovable.dto.member;
 import com.lovable.enums.ProjectRole;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotBlank;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -23,6 +24,8 @@ import jakarta.persistence.Enumerated;
  *
  */
 public record UpdateMemberRoleRequest(
+
+        @NotBlank(message = "Role cannot be blank")
         @Enumerated(EnumType.STRING)
         ProjectRole role
 ) {

@@ -2,16 +2,19 @@ package com.lovable.service.impls;
 
 import com.lovable.dto.project.ProjectDto;
 import com.lovable.entity.Project;
+import com.lovable.entity.ProjectMember;
+import com.lovable.entity.ProjectMemberId;
 import com.lovable.entity.User;
-import com.lovable.exception.ProjectNotFoundException;
-import com.lovable.exception.UserNotFoundException;
+import com.lovable.enums.ProjectRole;
+import com.lovable.exception.custom.ResourceNotFoundException;
+import com.lovable.exception.custom.UnauthorizedException;
 import com.lovable.mapper.ProjectMapper;
+import com.lovable.repository.ProjectMemberRepository;
 import com.lovable.repository.ProjectRepository;
 import com.lovable.repository.UserRepository;
 import com.lovable.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -40,6 +43,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ProjectServiceV1Impl implements ProjectService {
+    private final ProjectMemberRepository projectMemberRepository;
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
@@ -62,16 +66,28 @@ public class ProjectServiceV1Impl implements ProjectService {
 
     @Override
     public ProjectDto createProject(String email, ProjectDto projectDto) {
-        log.info("Creating project for user with email: {} and project {}", email, projectDto.getName());
-        User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new UserNotFoundException("User with email " + email + " not found")
+        log.info("Creating project for owner with email: {} and project {}", email, projectDto.getName());
+        User owner = userRepository.findByEmail(email).orElseThrow(
+                () -> new ResourceNotFoundException("User with email " + email + " not found")
         );
 
         Project project = Project.builder()
                 .name(projectDto.getName())
-                .owner(user)
+                .owner(owner)
                 .build();
+
         project = projectRepository.save(project);
+
+        ProjectMember projectMember = ProjectMember.builder()
+                .id(new ProjectMemberId(project.getId(), owner.getId()))
+                .project(project)
+                .user(owner)
+                .projectRole(ProjectRole.OWNER)
+                .invitedAt(LocalDateTime.now())
+                .build();
+
+        projectMemberRepository.save(projectMember);
+        
         return projectMapper.toProjectDto(project);
     }
 
@@ -81,7 +97,7 @@ public class ProjectServiceV1Impl implements ProjectService {
         Project project = getAccessibleProject(email, projectId);
 
         if (!project.getOwner().getEmail().equals(email)) {
-            throw new AccessDeniedException("Only owner can update project");
+            throw new UnauthorizedException("Only owner can update project");
         }
 
         project.setName(projectDto.getName());
@@ -95,7 +111,7 @@ public class ProjectServiceV1Impl implements ProjectService {
         Project project = getAccessibleProject(email, projectId);
 
         if (!project.getOwner().getEmail().equals(email)) {
-            throw new AccessDeniedException("Only owner can delete project");
+            throw new UnauthorizedException("Only owner can delete project");
         }
 
         project.setDeletedAt(LocalDateTime.now());
@@ -106,7 +122,7 @@ public class ProjectServiceV1Impl implements ProjectService {
     private Project getAccessibleProject(String email, Long projectId) {
         return projectRepository.findAccessibleProjectById(email, projectId)
                 .orElseThrow(
-                        () -> new ProjectNotFoundException(
+                        () -> new ResourceNotFoundException(
                                 "Project with id " + projectId + " not found for user with email " + email
                         ));
     }

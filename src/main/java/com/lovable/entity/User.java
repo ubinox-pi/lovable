@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,10 +52,11 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(name = "username", unique = true)
+    private String uniqueUsername;
+
     @Column(nullable = false)
     private String passwordHash;
-
-    private String avatarUrl;
 
     @OneToMany(
             mappedBy = "owner",
@@ -80,6 +82,7 @@ public class User implements UserDetails {
      * @return the authorities, sorted by natural key (never <code>null</code>)
      */
     @Override
+    @NullMarked
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
@@ -101,6 +104,7 @@ public class User implements UserDetails {
      * @return the username (never <code>null</code>)
      */
     @Override
+    @NullMarked
     public String getUsername() {
         return email;
     }

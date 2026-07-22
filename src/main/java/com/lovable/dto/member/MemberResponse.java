@@ -19,6 +19,7 @@ package com.lovable.dto.member;
  *
  */
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lovable.enums.ProjectRole;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -35,10 +36,14 @@ import java.time.LocalDateTime;
 @Builder
 public class MemberResponse {
     private Long userId;
+
     private String name;
-    private String email;
-    private String avatarUrl;
+
+    @JsonProperty("username")
+    private String uniqueUsername;
+
     @Enumerated(EnumType.STRING)
     private ProjectRole role;
+
     private LocalDateTime invitedAt;
 }

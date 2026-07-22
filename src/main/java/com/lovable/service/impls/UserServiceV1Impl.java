@@ -1,12 +1,16 @@
 package com.lovable.service.impls;
 
 import com.lovable.dto.auth.UserDto;
-import com.lovable.exception.UserNotFoundException;
+import com.lovable.exception.custom.ResourceNotFoundException;
 import com.lovable.mapper.UserMapper;
 import com.lovable.repository.UserRepository;
 import com.lovable.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NullMarked;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /*
@@ -31,7 +35,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserServiceV1Impl implements UserService {
+public class UserServiceV1Impl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -39,6 +43,26 @@ public class UserServiceV1Impl implements UserService {
     @Override
     public UserDto getMe(String email) {
         return userMapper.toUserDto(userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email)));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + email)));
+    }
+
+    /**
+     * Locates the user based on the username. In the actual implementation, the search
+     * may possibly be case sensitive, or case insensitive depending on how the
+     * implementation instance is configured. In this case, the <code>UserDetails</code>
+     * object that comes back may have a username that is of a different case than what
+     * was actually requested..
+     *
+     * @param username the username identifying the user whose data is required.
+     * @return a fully populated user record (never <code>null</code>)
+     * @throws UsernameNotFoundException if the user could not be found or the user has no
+     *                                   GrantedAuthority
+     */
+    @Override
+    @NullMarked
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.info("Loading user with username: {}", username);
+        return userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
     }
 }
