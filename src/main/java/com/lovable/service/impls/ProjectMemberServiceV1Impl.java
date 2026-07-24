@@ -38,6 +38,7 @@ import com.lovable.service.NotificationService;
 import com.lovable.service.ProjectMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -54,6 +55,7 @@ public class ProjectMemberServiceV1Impl implements ProjectMemberService {
     private final UserRepository userRepository;
     private final NotificationService emailNotificationService;
 
+    @PreAuthorize("@security.canViewMembers(#projectId)")
     @Override
     public List<MemberResponse> getProjectMembers(String email, Long projectId) {
         return projectMemberRepository.findByIdProjectId(projectId)
@@ -63,6 +65,7 @@ public class ProjectMemberServiceV1Impl implements ProjectMemberService {
     }
 
     @Override
+    @PreAuthorize("@security.canManageMembers(#projectId)")
     public MemberResponse inviteMember(String email, Long projectId, InviteMemberRequest inviteMemberRequest) {
         Project project = getAccessibleProject(email, projectId);
 
@@ -71,7 +74,7 @@ public class ProjectMemberServiceV1Impl implements ProjectMemberService {
         }
 
         User invitee = userRepository.findByUniqueUsername(inviteMemberRequest.getUniqueUsername())
-                .orElseThrow(() -> new ResourceNotFoundException("User with username " + inviteMemberRequest.getUniqueUsername() + " not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with unique username " + inviteMemberRequest.getUniqueUsername() + " not found"));
 
         if (invitee.equals(project.getOwner())) {
             throw new BadRequestException("Owner cannot be invited as a member");
@@ -98,6 +101,7 @@ public class ProjectMemberServiceV1Impl implements ProjectMemberService {
     }
 
     @Override
+    @PreAuthorize("@security.canManageMembers(#projectId)")
     public MemberResponse updateMemberRole(String email, Long projectId, Long memberId, UpdateMemberRoleRequest updateMemberRoleRequest) {
         Project project = getAccessibleProject(email, projectId);
 
@@ -116,6 +120,7 @@ public class ProjectMemberServiceV1Impl implements ProjectMemberService {
     }
 
     @Override
+    @PreAuthorize("@security.canManageMembers(#projectId)")
     public Void removeMember(String email, Long projectId, Long memberId) {
         Project project = getAccessibleProject(email, projectId);
 

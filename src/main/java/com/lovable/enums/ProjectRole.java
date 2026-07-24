@@ -1,5 +1,11 @@
 package com.lovable.enums;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+
 /*
  * Copyright (c) 2026 Ramjee Prasad
  * Licensed under a custom Non-Commercial, Attribution, Share-Alike License.
@@ -18,8 +24,21 @@ package com.lovable.enums;
  *   - Commercial use is strictly prohibited.
  *
  */
+
+@RequiredArgsConstructor
+@Getter
 public enum ProjectRole {
-    EDITOR,
-    VIEWER,
-    OWNER
+
+    EDITOR(new ConcurrentSkipListSet<>(Set.of(ProjectPermission.VIEW, ProjectPermission.EDIT, ProjectPermission.VIEW_MEMBERS))),
+    VIEWER(new ConcurrentSkipListSet<>(Set.of(ProjectPermission.VIEW, ProjectPermission.VIEW_MEMBERS))),
+    OWNER(new ConcurrentSkipListSet<>(Set.of
+            (
+                    ProjectPermission.VIEW,
+                    ProjectPermission.EDIT,
+                    ProjectPermission.DELETE,
+                    ProjectPermission.MANAGE_MEMBERS,
+                    ProjectPermission.VIEW_MEMBERS)
+    ));
+
+    private final Set<ProjectPermission> permissionSet;
 }

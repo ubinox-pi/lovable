@@ -70,7 +70,7 @@ public class AuthServiceImplV1 implements AuthService {
             user.setUniqueUsername(uniqueUsername);
         }
 
-        user.setPasswordHash(passwordEncoder.encode(userDto.getPasswordHash()));
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         user = userRepository.save(user);
 
         return userMapper.toUserDto(user);

@@ -43,7 +43,7 @@ public class ProjectMember {
     private Project project;
 
     @ManyToOne
-    @MapsId("userId")
+    @MapsId("memberId")
     private User user;
 
     @Enumerated(EnumType.STRING)

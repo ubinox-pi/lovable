@@ -35,11 +35,11 @@ import java.util.Objects;
 @AllArgsConstructor
 public class ProjectMemberId {
     private Long projectId;
-    private Long userId;
+    private Long memberId;
 
     @Override
     public final int hashCode() {
-        return Objects.hash(projectId, userId);
+        return Objects.hash(projectId, memberId);
     }
 
     @Override
@@ -51,6 +51,6 @@ public class ProjectMemberId {
         if (thisEffectiveClass != oEffectiveClass) return false;
         ProjectMemberId that = (ProjectMemberId) o;
         return getProjectId() != null && Objects.equals(getProjectId(), that.getProjectId())
-                && getUserId() != null && Objects.equals(getUserId(), that.getUserId());
+                && getMemberId() != null && Objects.equals(getMemberId(), that.getMemberId());
     }
 }

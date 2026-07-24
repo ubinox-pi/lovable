@@ -15,6 +15,7 @@ import com.lovable.repository.UserRepository;
 import com.lovable.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -59,6 +60,7 @@ public class ProjectServiceV1Impl implements ProjectService {
     }
 
     @Override
+    @PreAuthorize("@security.canViewProject(#projectId)")
     public ProjectDto getUserProjectById(String email, Long projectId) {
         log.info("Getting project with id: {} for user with email: {}", projectId, email);
         return projectMapper.toProjectDto(getAccessibleProject(email, projectId));
@@ -87,11 +89,12 @@ public class ProjectServiceV1Impl implements ProjectService {
                 .build();
 
         projectMemberRepository.save(projectMember);
-        
+
         return projectMapper.toProjectDto(project);
     }
 
     @Override
+    @PreAuthorize("@security.canEditProject(#projectId)")
     public ProjectDto updateProject(String email, Long projectId, ProjectDto projectDto) {
         log.info("Updating project with id: {} for user with email: {}", projectId, email);
         Project project = getAccessibleProject(email, projectId);
@@ -106,6 +109,7 @@ public class ProjectServiceV1Impl implements ProjectService {
     }
 
     @Override
+    @PreAuthorize("@security.canEditProject(#projectId)")
     public Void deleteProject(String email, Long projectId) {
         log.info("Deleting project with id: {} for user with email: {}", projectId, email);
         Project project = getAccessibleProject(email, projectId);

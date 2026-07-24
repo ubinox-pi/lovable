@@ -29,7 +29,7 @@ import org.mapstruct.Mappings;
 public interface ProjectMemberMapper {
 
     @Mappings({
-            @Mapping(source = "id.userId", target = "userId"),
+            @Mapping(source = "id.memberId", target = "userId"),
             @Mapping(source = "user.name", target = "name"),
             @Mapping(source = "user.uniqueUsername", target = "uniqueUsername"),
             @Mapping(source = "projectRole", target = "role"),

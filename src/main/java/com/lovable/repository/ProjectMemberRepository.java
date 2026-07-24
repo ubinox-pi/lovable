@@ -2,10 +2,13 @@ package com.lovable.repository;
 
 import com.lovable.entity.ProjectMember;
 import com.lovable.entity.ProjectMemberId;
+import com.lovable.enums.ProjectRole;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -30,4 +33,10 @@ import java.util.List;
 public interface ProjectMemberRepository extends JpaRepository<ProjectMember, ProjectMemberId> {
     List<ProjectMember> findByIdProjectId(Long idProjectId);
 
+    @Query("""
+            SELECT pm.projectRole FROM ProjectMember pm, User u
+            WHERE u.email = :email AND pm.id.projectId = :projectId
+                        AND pm.id.memberId = u.id
+            """)
+    Optional<ProjectRole> findRoleByProjectIdAndEmail(Long projectId, String email);
 }

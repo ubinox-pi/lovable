@@ -48,7 +48,7 @@ public class UserDto implements Serializable {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Size(max = 255, message = "Password cannot exceed 255 characters")
     @NotBlank(message = "Password cannot be blank")
-    private String passwordHash;
+    private String password;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createdAt;

@@ -56,7 +56,7 @@ public class User implements UserDetails {
     private String uniqueUsername;
 
     @Column(nullable = false)
-    private String passwordHash;
+    private String password;
 
     @OneToMany(
             mappedBy = "owner",
@@ -94,7 +94,7 @@ public class User implements UserDetails {
      */
     @Override
     public String getPassword() {
-        return passwordHash;
+        return password;
     }
 
     /**
