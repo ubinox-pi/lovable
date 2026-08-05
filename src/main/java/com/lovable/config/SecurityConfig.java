@@ -45,20 +45,15 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final String REMEMBER_ME_KEY;
-
-    public SecurityConfig(
-            @Value("${app.security.remember-me-key}")
-            String rememberMeKey
-    ) {
-        REMEMBER_ME_KEY = rememberMeKey;
-    }
+    @Value("${app.security.remember-me-key}")
+    private String REMEMBER_ME_KEY;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) {
         return http
                 .authorizeHttpRequests(authorised -> {
                     authorised.requestMatchers("/v1/auth/**").permitAll();
+                    authorised.requestMatchers("/v1/plans/**").permitAll(); // TODO: fix plans api
                     authorised.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> {
@@ -195,7 +190,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
         return authenticationConfiguration.getAuthenticationManager();
     }
 

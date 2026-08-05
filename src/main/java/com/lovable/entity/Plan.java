@@ -19,7 +19,7 @@ package com.lovable.entity;
  *
  */
 
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -31,13 +31,25 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
 public class Plan {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
 
-    private String PriceId;
+    private Integer price;
+
+    private String currency;
+
+    private String period;
+
+    private Integer interval;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     private Integer maxProjects;
 

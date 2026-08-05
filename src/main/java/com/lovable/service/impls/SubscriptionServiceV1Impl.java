@@ -1,8 +1,5 @@
 package com.lovable.service.impls;
 
-import com.lovable.dto.subscription.CheckoutRequest;
-import com.lovable.dto.subscription.CheckoutResponse;
-import com.lovable.dto.subscription.PortalResponse;
 import com.lovable.dto.subscription.SubscriptionResponse;
 import com.lovable.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
@@ -33,16 +30,6 @@ import org.springframework.stereotype.Service;
 public class SubscriptionServiceV1Impl implements SubscriptionService {
     @Override
     public SubscriptionResponse getCurrentSubscription(String email) {
-        return null;
-    }
-
-    @Override
-    public CheckoutResponse createCheckoutSession(String email, CheckoutRequest checkoutRequest) {
-        return null;
-    }
-
-    @Override
-    public PortalResponse openCustomerPortal(String email) {
         return null;
     }
 }

@@ -1,6 +1,4 @@
-package com.lovable.service;
-
-import com.lovable.dto.subscription.SubscriptionResponse;
+package com.lovable.mapper;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -8,9 +6,9 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.service
- * Created by: Ashish Kushwaha on 15-07-2026 19:45
- * File: SubscriptionService
+ * Package: com.lovable.mapper
+ * Created by: Ashish Kushwaha on 24-07-2026 13:36
+ * File: PlanMapper
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -20,6 +18,14 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  *   - Commercial use is strictly prohibited.
  *
  */
-public interface SubscriptionService {
-    SubscriptionResponse getCurrentSubscription(String email);
+
+import com.lovable.dto.plan.PlanDto;
+import com.lovable.entity.Plan;
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface PlanMapper {
+    Plan toPlanEntity(PlanDto planDto);
+
+    PlanDto toPlanDto(Plan plan);
 }

@@ -1,6 +1,8 @@
-package com.lovable.service;
+package com.lovable.entity;
 
-import com.lovable.dto.subscription.SubscriptionResponse;
+import com.lovable.enums.PaymentProvider;
+import jakarta.persistence.*;
+import lombok.*;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -8,9 +10,9 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.service
- * Created by: Ashish Kushwaha on 15-07-2026 19:45
- * File: SubscriptionService
+ * Package: com.lovable.entity
+ * Created by: Ashish Kushwaha on 24-07-2026 15:36
+ * File: PaymentProviderPlan
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -20,6 +22,23 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  *   - Commercial use is strictly prohibited.
  *
  */
-public interface SubscriptionService {
-    SubscriptionResponse getCurrentSubscription(String email);
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class PaymentProviderPlan {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;
+
+    @ManyToOne
+    private Plan plan;
+
+    private PaymentProvider provider;
+
+    @Column(unique = true, nullable = false)
+    private String providerPlanId;
 }

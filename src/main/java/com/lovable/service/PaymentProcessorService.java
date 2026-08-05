@@ -1,6 +1,8 @@
 package com.lovable.service;
 
-import com.lovable.dto.subscription.SubscriptionResponse;
+import com.lovable.dto.subscription.CheckoutRequest;
+import com.lovable.dto.subscription.CheckoutResponse;
+import com.lovable.dto.subscription.PortalResponse;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -9,8 +11,8 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  *
  * Project: lovable
  * Package: com.lovable.service
- * Created by: Ashish Kushwaha on 15-07-2026 19:45
- * File: SubscriptionService
+ * Created by: Ashish Kushwaha on 24-07-2026 13:08
+ * File: PaymentProcessorService
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -20,6 +22,8 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  *   - Commercial use is strictly prohibited.
  *
  */
-public interface SubscriptionService {
-    SubscriptionResponse getCurrentSubscription(String email);
+public interface PaymentProcessorService {
+    CheckoutResponse createCheckoutSession(String email, CheckoutRequest checkoutRequest);
+
+    PortalResponse openCustomerPortal(String email);
 }

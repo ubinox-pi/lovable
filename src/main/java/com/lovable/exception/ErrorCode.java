@@ -172,7 +172,18 @@ public enum ErrorCode {
             HttpStatus.SERVICE_UNAVAILABLE,
             "SERVICE_UNAVAILABLE",
             "Service temporarily unavailable"
-    ), UNSUPPORTED_MEDIA(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "UNSUPPORTED_MEDIA", "Unsupported media type");
+    ),
+
+    UNSUPPORTED_MEDIA(
+            HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+            "UNSUPPORTED_MEDIA",
+            "Unsupported media type"),
+
+    PAYMENT_PROVIDER_ERROR(
+            HttpStatus.BAD_GATEWAY,
+            "PAYMENT_PROVIDER_ERROR",
+            "Payment provider error"
+    );
 
     private final HttpStatus status;
     private final String code;

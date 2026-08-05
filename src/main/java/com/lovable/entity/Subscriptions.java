@@ -8,7 +8,7 @@ package com.lovable.entity;
  * Project: lovable
  * Package: com.lovable.entity
  * Created by: Ashish Kushwaha on 08-07-2026 16:21
- * File: Subscription
+ * File: Subscriptions
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -19,6 +19,7 @@ package com.lovable.entity;
  *
  */
 
+import com.lovable.enums.PaymentProvider;
 import com.lovable.enums.SubscriptionStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
@@ -33,7 +34,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Subscription {
+public class Subscriptions {
 
     private Long id;
 
@@ -43,6 +44,9 @@ public class Subscription {
 
     @Enumerated(EnumType.STRING)
     private SubscriptionStatus status;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentProvider provider;
 
     private String customerId;
 

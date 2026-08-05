@@ -1,7 +1,5 @@
 package com.lovable.service;
 
-import com.lovable.dto.subscription.SubscriptionResponse;
-
 /*
  * Copyright (c) 2026 Ramjee Prasad
  * Licensed under a custom Non-Commercial, Attribution, Share-Alike License.
@@ -9,8 +7,8 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  *
  * Project: lovable
  * Package: com.lovable.service
- * Created by: Ashish Kushwaha on 15-07-2026 19:45
- * File: SubscriptionService
+ * Created by: Ashish Kushwaha on 27-07-2026 19:50
+ * File: ProcessSubscriptionWebhook
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -20,6 +18,6 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  *   - Commercial use is strictly prohibited.
  *
  */
-public interface SubscriptionService {
-    SubscriptionResponse getCurrentSubscription(String email);
+public interface ProcessSubscriptionWebhook {
+    Void process(Object body);
 }

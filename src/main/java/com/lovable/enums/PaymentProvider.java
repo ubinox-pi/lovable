@@ -1,6 +1,4 @@
-package com.lovable.service;
-
-import com.lovable.dto.subscription.SubscriptionResponse;
+package com.lovable.enums;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -8,9 +6,9 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.service
- * Created by: Ashish Kushwaha on 15-07-2026 19:45
- * File: SubscriptionService
+ * Package: com.lovable.enums
+ * Created by: Ashish Kushwaha on 24-07-2026 15:37
+ * File: PaymentProvider
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -20,6 +18,8 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  *   - Commercial use is strictly prohibited.
  *
  */
-public interface SubscriptionService {
-    SubscriptionResponse getCurrentSubscription(String email);
+public enum PaymentProvider {
+    RAZORPAY,
+    PAYTM,
+    STRIPE
 }

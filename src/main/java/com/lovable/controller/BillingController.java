@@ -19,12 +19,11 @@ package com.lovable.controller;
  *
  */
 
-import com.lovable.dto.plan.PlanDto;
 import com.lovable.dto.subscription.CheckoutRequest;
 import com.lovable.dto.subscription.CheckoutResponse;
 import com.lovable.dto.subscription.PortalResponse;
 import com.lovable.dto.subscription.SubscriptionResponse;
-import com.lovable.service.PlanService;
+import com.lovable.service.PaymentProcessorService;
 import com.lovable.service.SubscriptionService;
 import com.lovable.util.AppUtils;
 import lombok.RequiredArgsConstructor;
@@ -32,20 +31,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RequestMapping("/v1")
 @RestController
 @RequiredArgsConstructor
 public class BillingController {
 
-    private final PlanService planService;
     private final SubscriptionService subscriptionService;
-
-    @GetMapping("/plans")
-    public ResponseEntity<List<PlanDto>> getAllPlans() {
-        return new ResponseEntity<>(planService.getAllPlans(), HttpStatus.OK);
-    }
+    private final PaymentProcessorService paymentProcessorService;
 
     @GetMapping("/me/subscription")
     public ResponseEntity<SubscriptionResponse> getMySubscription() {
@@ -56,12 +48,12 @@ public class BillingController {
     @PostMapping("/checkout")
     public ResponseEntity<CheckoutResponse> createCheckoutResponse(@RequestBody CheckoutRequest checkoutRequest) {
         String email = AppUtils.getCurrentUserEmail();
-        return new ResponseEntity<>(subscriptionService.createCheckoutSession(email, checkoutRequest), HttpStatus.OK);
+        return new ResponseEntity<>(paymentProcessorService.createCheckoutSession(email, checkoutRequest), HttpStatus.OK);
     }
 
     @PostMapping("/portal")
     public ResponseEntity<PortalResponse> openCustomerPortal() {
         String email = AppUtils.getCurrentUserEmail();
-        return new ResponseEntity<>(subscriptionService.openCustomerPortal(email), HttpStatus.OK);
+        return new ResponseEntity<>(paymentProcessorService.openCustomerPortal(email), HttpStatus.OK);
     }
 }

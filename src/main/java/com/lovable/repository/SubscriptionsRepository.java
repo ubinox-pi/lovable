@@ -1,6 +1,7 @@
-package com.lovable.service;
+package com.lovable.repository;
 
-import com.lovable.dto.subscription.SubscriptionResponse;
+import com.lovable.entity.Subscriptions;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -8,9 +9,9 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.service
- * Created by: Ashish Kushwaha on 15-07-2026 19:45
- * File: SubscriptionService
+ * Package: com.lovable.repository
+ * Created by: Ashish Kushwaha on 27-07-2026 19:34
+ * File: SubscriptionsRepository
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -20,6 +21,5 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  *   - Commercial use is strictly prohibited.
  *
  */
-public interface SubscriptionService {
-    SubscriptionResponse getCurrentSubscription(String email);
+public interface SubscriptionsRepository extends JpaRepository<Subscriptions, Long> {
 }

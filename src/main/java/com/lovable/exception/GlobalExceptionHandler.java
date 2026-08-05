@@ -19,6 +19,7 @@ package com.lovable.exception;
  *
  */
 
+import com.razorpay.RazorpayException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +27,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.HashMap;
@@ -93,6 +96,45 @@ public class GlobalExceptionHandler {
                         request
                 )
         );
+    }
+
+    @ExceptionHandler(RazorpayException.class)
+    public ResponseEntity<ApiResponse<Void>> handleRazorpayException(
+            RazorpayException ex,
+            HttpServletRequest request) {
+
+        log.error("Razorpay API error: {}", ex.getMessage(), ex);
+
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                .body(
+                        ErrorResponseFactory.build(
+                                ErrorCode.PAYMENT_PROVIDER_ERROR,
+                                "Payment provider error: " + ex.getMessage(),
+                                null,
+                                request
+                        )
+                );
+    }
+
+    @ExceptionHandler(WebClientResponseException.class)
+    public ResponseEntity<ApiResponse<Void>> handleRazorpayException(
+            WebClientResponseException ex,
+            HttpServletRequest request) {
+
+        log.error("Razorpay API returned {}: {}",
+                ex.getStatusCode(),
+                ex.getResponseBodyAsString(),
+                ex);
+
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                .body(
+                        ErrorResponseFactory.build(
+                                ErrorCode.PAYMENT_PROVIDER_ERROR,
+                                "Payment provider error",
+                                Map.of("responseBody", ex.getResponseBodyAsString()),
+                                request
+                        )
+                );
     }
 
     @ExceptionHandler(HandlerMethodValidationException.class)

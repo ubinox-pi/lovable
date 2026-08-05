@@ -1,6 +1,4 @@
-package com.lovable.service;
-
-import com.lovable.dto.subscription.SubscriptionResponse;
+package com.lovable.config;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -8,9 +6,9 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.service
- * Created by: Ashish Kushwaha on 15-07-2026 19:45
- * File: SubscriptionService
+ * Package: com.lovable.config
+ * Created by: Ashish Kushwaha on 24-07-2026 12:01
+ * File: RazorpayProperties
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -20,6 +18,16 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  *   - Commercial use is strictly prohibited.
  *
  */
-public interface SubscriptionService {
-    SubscriptionResponse getCurrentSubscription(String email);
+
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@Getter
+@Setter
+@ConfigurationProperties(prefix = "razorpay")
+public class RazorpayProperties {
+    private String keyId;
+    private String keySecret;
+    private String webhookSecret;
 }

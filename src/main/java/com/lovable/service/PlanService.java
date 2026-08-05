@@ -24,4 +24,8 @@ import java.util.List;
  */
 public interface PlanService {
     List<PlanDto> getAllPlans();
+
+    PlanDto createPlan(PlanDto planDto);
+
+    PlanDto getPlanById(Long planId);
 }
