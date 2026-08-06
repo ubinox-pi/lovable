@@ -26,6 +26,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,4 +37,8 @@ public class CheckoutRequest {
     @NotNull(message = "Plan ID cannot be null")
     @Positive(message = "Plan ID must be a positive value")
     private Long planId;
+
+
+    // TODO: Will be added for the idempotency
+    private UUID paymentId;
 }

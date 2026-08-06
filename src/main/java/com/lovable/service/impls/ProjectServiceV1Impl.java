@@ -13,6 +13,7 @@ import com.lovable.repository.ProjectMemberRepository;
 import com.lovable.repository.ProjectRepository;
 import com.lovable.repository.UserRepository;
 import com.lovable.service.ProjectService;
+import com.lovable.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -49,6 +50,7 @@ public class ProjectServiceV1Impl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final ProjectMapper projectMapper;
+    private final SubscriptionService subscriptionService;
 
     @Override
     public List<ProjectDto> getUserAllProject(String email) {
@@ -72,6 +74,13 @@ public class ProjectServiceV1Impl implements ProjectService {
         User owner = userRepository.findByEmail(email).orElseThrow(
                 () -> new ResourceNotFoundException("User with email " + email + " not found")
         );
+
+        if (subscriptionService.canCreateNewProject()) {
+            log.info("User with email: {} has an active subscription and can create a new project", email);
+        } else {
+            log.warn("User with email: {} does not have an active subscription and cannot create a new project", email);
+            throw new UnauthorizedException("User with email " + email + " does not have an active subscription and cannot create a new project");
+        }
 
         Project project = Project.builder()
                 .name(projectDto.getName())

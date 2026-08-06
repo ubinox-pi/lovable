@@ -20,6 +20,7 @@ package com.lovable.dto.subscription;
  */
 
 import com.lovable.dto.plan.PlanDto;
+import com.lovable.enums.SubscriptionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,7 +34,7 @@ import java.time.LocalDateTime;
 @Builder
 public class SubscriptionResponse {
     private PlanDto plan;
-    private String status;
-    private LocalDateTime periodEnd;
+    private SubscriptionStatus status;
+    private LocalDateTime currentPeriodEnd;
     private Long tokenUsedThisCycle;
 }

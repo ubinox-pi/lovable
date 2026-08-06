@@ -21,9 +21,7 @@ package com.lovable.entity;
 
 import com.lovable.enums.PaymentProvider;
 import com.lovable.enums.SubscriptionStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -34,12 +32,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
 public class Subscriptions {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    @JoinColumn(name = "plan_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private Plan plan;
 
     @Enumerated(EnumType.STRING)
@@ -47,6 +52,9 @@ public class Subscriptions {
 
     @Enumerated(EnumType.STRING)
     private PaymentProvider provider;
+
+    @Builder.Default
+    private Long tokenUsedThisCycle = 0L;
 
     private String customerId;
 

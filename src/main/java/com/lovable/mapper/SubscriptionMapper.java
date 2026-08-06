@@ -1,4 +1,4 @@
-package com.lovable.enums;
+package com.lovable.mapper;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -6,9 +6,9 @@ package com.lovable.enums;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.enums
- * Created by: Ashish Kushwaha on 08-07-2026 16:46
- * File: SubscriptionStatus
+ * Package: com.lovable.mapper
+ * Created by: Ashish Kushwaha on 06-08-2026 00:20
+ * File: SubscriptionMapper
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -18,11 +18,13 @@ package com.lovable.enums;
  *   - Commercial use is strictly prohibited.
  *
  */
-public enum SubscriptionStatus {
-    ACTIVE,
-    TRAILING,
-    CANCELLED,
-    PAST_DUE,
-    INCOMPLETE,
-    NONEXISTENT
+
+import com.lovable.dto.subscription.SubscriptionResponse;
+import com.lovable.entity.Subscriptions;
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface SubscriptionMapper {
+
+    SubscriptionResponse toSubscriptionResponse(Subscriptions subscription);
 }

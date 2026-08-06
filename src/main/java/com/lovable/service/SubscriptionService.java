@@ -1,6 +1,9 @@
 package com.lovable.service;
 
 import com.lovable.dto.subscription.SubscriptionResponse;
+import com.lovable.enums.SubscriptionStatus;
+
+import java.time.LocalDateTime;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -22,4 +25,14 @@ import com.lovable.dto.subscription.SubscriptionResponse;
  */
 public interface SubscriptionService {
     SubscriptionResponse getCurrentSubscription(String email);
+
+    Void updateSubscription(String subscriptionId, SubscriptionStatus status, LocalDateTime periodStart, LocalDateTime periodEnd, Boolean isActive);
+
+    Void cancelSubscription(String subscriptionId);
+
+    Void renewSubscriptionPeriod(String subscriptionId, LocalDateTime periodStart, LocalDateTime periodEnd);
+
+    Void markSubscriptionPastDue(String subscriptionId);
+
+    boolean canCreateNewProject();
 }
