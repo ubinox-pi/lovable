@@ -19,7 +19,7 @@ package com.lovable.entity;
  *
  */
 
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -31,19 +31,25 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
 public class ProjectFile {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private Project project;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(updatable = false)
     private User createdBy;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     private User updatedBy;
 
+    @Column(nullable = false)
     private String path;
-
-    private String fileName;
 
     private String objectKey;
 

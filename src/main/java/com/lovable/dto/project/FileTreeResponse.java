@@ -19,12 +19,13 @@ package com.lovable.dto.project;
  *
  */
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
 import java.util.List;
 
+@AllArgsConstructor
+@Builder
 public class FileTreeResponse {
     private final List<FileNode> files;
-
-    public FileTreeResponse(List<FileNode> files) {
-        this.files = files;
-    }
 }

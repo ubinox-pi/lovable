@@ -20,9 +20,7 @@ package com.lovable.entity;
  */
 
 import com.lovable.enums.MessageRole;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -33,20 +31,31 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Entity
 public class ChatMessage {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumns({
+            @JoinColumn(name = "project_id", referencedColumnName = "project_id", nullable = false),
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    })
     private ChatSession chatSession;
 
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private MessageRole role;
 
     private String toolsCalls;
 
-    private Integer tokenUsed;
+    @Builder.Default
+    private Integer tokensUsed = 0;
 
     @CreationTimestamp
     @Column(updatable = false)

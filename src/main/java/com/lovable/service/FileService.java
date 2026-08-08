@@ -2,6 +2,8 @@ package com.lovable.service;
 
 import com.lovable.dto.project.FileContentResponse;
 import com.lovable.dto.project.FileTreeResponse;
+import com.lovable.entity.User;
+import jakarta.validation.constraints.NotNull;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -26,4 +28,6 @@ public interface FileService {
     FileTreeResponse getFileTree(String email, Long projectId);
 
     FileContentResponse getFileContent(String email, Long projectId, String path);
+
+    void saveFile(User user, @NotNull(message = "Project ID cannot be null") Long projectId, String filePath, String fileContent);
 }

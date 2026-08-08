@@ -1,8 +1,10 @@
-package com.lovable.entity;
+package com.lovable.repository;
 
-import com.lovable.enums.PaymentProvider;
-import jakarta.persistence.*;
-import lombok.*;
+import com.lovable.entity.ProjectFile;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -10,9 +12,9 @@ import lombok.*;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.entity
- * Created by: Ashish Kushwaha on 24-07-2026 15:36
- * File: PaymentProviderPlan
+ * Package: com.lovable.repository
+ * Created by: Ashish Kushwaha on 08-08-2026 12:08
+ * File: ProjectFileRepository
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -22,23 +24,8 @@ import lombok.*;
  *   - Commercial use is strictly prohibited.
  *
  */
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class PaymentProviderPlan {
+public interface ProjectFileRepository extends JpaRepository<ProjectFile, Long> {
+    Optional<ProjectFile> findByProjectIdAndPath(Long projectId, String path);
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    private Plan plan;
-
-    private PaymentProvider provider;
-
-    @Column(unique = true, nullable = false)
-    private String providerPlanId;
+    Optional<List<ProjectFile>> findByProjectIdAndCreatedByEmail(Long projectId, String createdByEmail);
 }

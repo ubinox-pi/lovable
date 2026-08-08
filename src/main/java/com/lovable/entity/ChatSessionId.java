@@ -1,9 +1,5 @@
 package com.lovable.entity;
 
-import com.lovable.enums.PaymentProvider;
-import jakarta.persistence.*;
-import lombok.*;
-
 /*
  * Copyright (c) 2026 Ramjee Prasad
  * Licensed under a custom Non-Commercial, Attribution, Share-Alike License.
@@ -11,8 +7,8 @@ import lombok.*;
  *
  * Project: lovable
  * Package: com.lovable.entity
- * Created by: Ashish Kushwaha on 24-07-2026 15:36
- * File: PaymentProviderPlan
+ * Created by: Ashish Kushwaha on 06-08-2026 15:47
+ * File: ChatSessionId
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -22,23 +18,15 @@ import lombok.*;
  *   - Commercial use is strictly prohibited.
  *
  */
-@Entity
+
+import lombok.*;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PaymentProviderPlan {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    private Plan plan;
-
-    private PaymentProvider provider;
-
-    @Column(unique = true, nullable = false)
-    private String providerPlanId;
+public class ChatSessionId {
+    private Long userId;
+    private Long projectId;
 }

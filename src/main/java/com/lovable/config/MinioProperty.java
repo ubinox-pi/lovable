@@ -1,8 +1,4 @@
-package com.lovable.entity;
-
-import com.lovable.enums.PaymentProvider;
-import jakarta.persistence.*;
-import lombok.*;
+package com.lovable.config;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -10,9 +6,9 @@ import lombok.*;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.entity
- * Created by: Ashish Kushwaha on 24-07-2026 15:36
- * File: PaymentProviderPlan
+ * Package: com.lovable.config
+ * Created by: Ashish Kushwaha on 08-08-2026 11:45
+ * File: MinioProperty
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -22,23 +18,19 @@ import lombok.*;
  *   - Commercial use is strictly prohibited.
  *
  */
-@Entity
+
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class PaymentProviderPlan {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    private Plan plan;
-
-    private PaymentProvider provider;
-
-    @Column(unique = true, nullable = false)
-    private String providerPlanId;
+@ConfigurationProperties(prefix = "minio")
+@Component
+public class MinioProperty {
+    private String endpoint;
+    private String accessKey;
+    private String secretKey;
+    private String bucketName;
 }

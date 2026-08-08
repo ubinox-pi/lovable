@@ -1,0 +1,67 @@
+services:
+  pgvector:
+    image: pgvector/pgvector:pg16
+    container_name: lovable-pgvector
+    environment:
+      POSTGRES_USER: ashish
+      POSTGRES_PASSWORD: ashish
+      POSTGRES_DB: lovable_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgvector:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - lovable-network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ashish -d lovable_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: lovable-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ashish
+      MINIO_ROOT_PASSWORD: ashish123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    networks:
+      - lovable-network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:8.6.4-alpine
+    container_name: lovable-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - lovable-network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  minio-data:
+  redis-data:
+  pgvector:
+
+networks:
+  lovable-network:
+    driver: bridge

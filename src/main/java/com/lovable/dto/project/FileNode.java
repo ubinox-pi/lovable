@@ -19,6 +19,7 @@ package com.lovable.dto.project;
  *
  */
 
+import com.lovable.dto.auth.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,8 +33,6 @@ import java.time.LocalDateTime;
 @Builder
 public class FileNode {
     private String path;
-    private String filename;
-    private LocalDateTime modifiedAt;
-    private Long size;
-    private String type;
+    private LocalDateTime updatedAt;
+    private UserDto updatedBy;
 }

@@ -1,6 +1,6 @@
 package com.lovable.entity;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -31,13 +31,21 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
 public class ChatSession {
 
+    @EmbeddedId
+    private ChatSessionId id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @MapsId("projectId")
+    @JoinColumn(name = "project_id", insertable = false, updatable = false)
     private Project project;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @MapsId("userId")
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
-
-    private String title;
 
     @CreationTimestamp
     @Column(updatable = false)

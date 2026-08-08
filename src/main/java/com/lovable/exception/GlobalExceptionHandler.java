@@ -523,5 +523,20 @@ public class GlobalExceptionHandler {
                 );
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponse<Void>> handleRuntimeException(
+            RuntimeException ex,
+            HttpServletRequest request) {
 
+        log.error("Unhandled runtime exception", ex);
+
+        return ResponseEntity.internalServerError()
+                .body(
+                        ErrorResponseFactory.build(
+                                ErrorCode.INTERNAL_SERVER_ERROR,
+                                "An unexpected error occurred.",
+                                request
+                        )
+                );
+    }
 }

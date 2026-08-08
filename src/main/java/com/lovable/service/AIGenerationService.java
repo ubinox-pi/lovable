@@ -1,8 +1,8 @@
-package com.lovable.entity;
+package com.lovable.service;
 
-import com.lovable.enums.PaymentProvider;
-import jakarta.persistence.*;
-import lombok.*;
+import com.lovable.dto.chat.ChatRequest;
+import jakarta.validation.Valid;
+import reactor.core.publisher.Flux;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -10,9 +10,9 @@ import lombok.*;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.entity
- * Created by: Ashish Kushwaha on 24-07-2026 15:36
- * File: PaymentProviderPlan
+ * Package: com.lovable.service
+ * Created by: Ashish Kushwaha on 06-08-2026 16:02
+ * File: AIGenerationService
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -22,23 +22,7 @@ import lombok.*;
  *   - Commercial use is strictly prohibited.
  *
  */
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class PaymentProviderPlan {
+public interface AIGenerationService {
+    Flux<String> streamChat(@Valid ChatRequest request);
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne
-    private Plan plan;
-
-    private PaymentProvider provider;
-
-    @Column(unique = true, nullable = false)
-    private String providerPlanId;
 }

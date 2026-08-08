@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorised -> {
                     authorised.requestMatchers("/v1/auth/**").permitAll();
                     authorised.requestMatchers("/v1/plans/**").permitAll(); // TODO: fix plans api
+                    authorised.requestMatchers("/v1/webhooks/**").permitAll();
                     authorised.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> {

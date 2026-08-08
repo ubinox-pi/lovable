@@ -4,6 +4,9 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.graalvm.buildtools.native' version '1.1.1'
 }
+ext {
+    springAiVersion = "2.0.0"
+}
 
 group = 'com.lovable'
 version = '0.0.1-SNAPSHOT'
@@ -30,6 +33,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-session-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-webclient'
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+    implementation 'io.minio:minio:8.0.0'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'io.projectreactor:reactor-test'
     compileOnly 'org.projectlombok:lombok'
@@ -41,6 +46,11 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testAnnotationProcessor 'org.projectlombok:lombok'
+}
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:$springAiVersion"
+    }
 }
 
 tasks.named('test') {

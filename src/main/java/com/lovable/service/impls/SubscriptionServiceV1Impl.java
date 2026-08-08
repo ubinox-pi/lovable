@@ -43,6 +43,7 @@ public class SubscriptionServiceV1Impl implements SubscriptionService {
     private final SubscriptionMapper subscriptionMapper;
     private final SubscriptionRepository subscriptionRepository;
     private final UserRepository userRepository;
+    private final Integer freeProjectLimit = 1;
 
     @Override
     public SubscriptionResponse getCurrentSubscription(String email) {
@@ -92,6 +93,9 @@ public class SubscriptionServiceV1Impl implements SubscriptionService {
     @Override
     public boolean canCreateNewProject() {
         User currentUser = userRepository.getReferenceById(AppUtils.getCurrentUserId());
+        if (currentUser.getProjects().isEmpty() || currentUser.getProjects().size() < freeProjectLimit) {
+            return true;
+        }
         Subscriptions subscription = subscriptionRepository.findByUserEmailWithActiveSubscriptions(currentUser.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("No active subscription found for user"));
         return subscription.getPlan().getMaxProjects() >

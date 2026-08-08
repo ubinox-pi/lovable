@@ -50,6 +50,6 @@ public class FileController {
             @PathVariable String path
     ) {
         String email = AppUtils.getCurrentUserEmail();
-        return new ResponseEntity(fileService.getFileContent(email, projectId, path), HttpStatus.OK);
+        return new ResponseEntity<>(fileService.getFileContent(email, projectId, path), HttpStatus.OK);
     }
 }

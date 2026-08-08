@@ -8,7 +8,7 @@ package com.lovable.service.impls;
  * Project: lovable
  * Package: com.lovable.service.impls
  * Created by: Ashish Kushwaha on 10-07-2026 14:59
- * File: AuthServiceImplV1
+ * File: AuthServiceV1Impl
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -46,7 +46,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AuthServiceImplV1 implements AuthService {
+public class AuthServiceV1Impl implements AuthService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;

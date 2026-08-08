@@ -1,8 +1,4 @@
-package com.lovable.entity;
-
-import com.lovable.enums.PaymentProvider;
-import jakarta.persistence.*;
-import lombok.*;
+package com.lovable.mapper;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -10,9 +6,9 @@ import lombok.*;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.entity
- * Created by: Ashish Kushwaha on 24-07-2026 15:36
- * File: PaymentProviderPlan
+ * Package: com.lovable.mapper
+ * Created by: Ashish Kushwaha on 08-08-2026 17:14
+ * File: ProjectFileMapper
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -22,23 +18,15 @@ import lombok.*;
  *   - Commercial use is strictly prohibited.
  *
  */
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class PaymentProviderPlan {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+import com.lovable.dto.project.FileNode;
+import com.lovable.entity.ProjectFile;
+import org.mapstruct.Mapper;
 
-    @ManyToOne
-    private Plan plan;
+import java.util.List;
 
-    private PaymentProvider provider;
+@Mapper(componentModel = "spring")
+public interface ProjectFileMapper {
 
-    @Column(unique = true, nullable = false)
-    private String providerPlanId;
+    List<FileNode> toFileTreeResponse(List<ProjectFile> projectFiles);
 }
