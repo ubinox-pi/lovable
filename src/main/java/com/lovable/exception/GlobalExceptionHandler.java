@@ -217,7 +217,7 @@ public class GlobalExceptionHandler {
                 .body(
                         ErrorResponseFactory.build(
                                 ErrorCode.ACCESS_DENIED,
-                                "You don't have permission to access this resource. \n" + ex.getMessage(),
+                                "You don't have permission to access this resource. " + ex.getMessage(),
                                 request
                         )
                 );

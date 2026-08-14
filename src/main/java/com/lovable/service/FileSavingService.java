@@ -46,6 +46,7 @@ public class FileSavingService {
         log.debug("all matches: {}", matcher);
 
         while (matcher.find()) {
+            log.debug("Found file tag: {}", matcher.group());
             String filePath = matcher.group(1);
             String fileContent = matcher.group(2).trim();
 

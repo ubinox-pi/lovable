@@ -9,14 +9,15 @@ import com.lovable.exception.custom.ResourceNotFoundException;
 import com.lovable.mapper.ProjectFileMapper;
 import com.lovable.repository.ProjectFileRepository;
 import com.lovable.repository.ProjectRepository;
-import com.lovable.repository.UserRepository;
 import com.lovable.service.FileService;
+import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -55,7 +56,6 @@ public class FileServiceV1Impl implements FileService {
 
     private final ProjectRepository projectRepository;
     private final ProjectFileRepository projectFileRepository;
-    private final UserRepository userRepository;
     private final MinioClient minioClient;
     private final MinioProperty minioProperty;
     private final ProjectFileMapper projectFileMapper;
@@ -70,8 +70,31 @@ public class FileServiceV1Impl implements FileService {
     }
 
     @Override
+    @PreAuthorize("@security.canEditProject(#email, #projectId)")
     public FileContentResponse getFileContent(String email, Long projectId, String path) {
-        return null;
+        String foundPath = projectFileRepository.findByProjectIdAndPath(projectId, path)
+                .orElseThrow(() -> new ResourceNotFoundException("File not found with path: " + path + "for project id: " + projectId))
+                .getPath();
+
+        String objectKey = projectId + "/" + foundPath;
+
+        try (
+                InputStream inputStream = minioClient.getObject(
+                        GetObjectArgs.builder()
+                                .bucket(minioProperty.getBucketName())
+                                .object(objectKey)
+                                .build())
+        ) {
+            String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            return FileContentResponse.builder()
+                    .path(foundPath)
+                    .content(content)
+                    .build();
+        } catch (ServerException | InsufficientDataException | ErrorResponseException | IOException |
+                 NoSuchAlgorithmException | InvalidKeyException | InvalidResponseException | XmlParserException |
+                 InternalException e) {
+            throw new RuntimeException("Error fetching file content: " + e.getMessage() + ":" + e.getCause() + " for path: " + path + " for project id: " + projectId);
+        }
     }
 
     @Override
@@ -106,7 +129,7 @@ public class FileServiceV1Impl implements FileService {
                             .path(cleanPath)
                             .objectKey(objectKey)
                             .build());
-            
+
             projectFile.setUpdatedAt(LocalDateTime.now());
             projectFileRepository.save(projectFile);
 
@@ -129,7 +152,12 @@ public class FileServiceV1Impl implements FileService {
         if (filePath.endsWith(".json")) return "application/json";
         if (filePath.endsWith(".css")) return "text/css";
         if (filePath.endsWith(".html")) return "text/html";
+        if (filePath.endsWith(".yml") || filePath.endsWith(".yaml")) return "text/yaml";
+        if (filePath.endsWith(".iml")) return "application/xml";
         if (filePath.endsWith(".md")) return "text/markdown";
+        if (filePath.endsWith(".gitignore")) return "text/plain";
+        if (filePath.endsWith(".prettierignore")) return "text/plain";
+        if (filePath.endsWith(".prettierrc")) return "text/plain";
         return "text/plain";
     }
 }

@@ -5,6 +5,7 @@ import com.lovable.entity.Subscriptions;
 import com.lovable.entity.User;
 import com.lovable.enums.SubscriptionStatus;
 import com.lovable.exception.custom.ResourceNotFoundException;
+import com.lovable.exception.custom.UnauthorizedException;
 import com.lovable.mapper.SubscriptionMapper;
 import com.lovable.repository.SubscriptionRepository;
 import com.lovable.repository.UserRepository;
@@ -97,7 +98,7 @@ public class SubscriptionServiceV1Impl implements SubscriptionService {
             return true;
         }
         Subscriptions subscription = subscriptionRepository.findByUserEmailWithActiveSubscriptions(currentUser.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("No active subscription found for user"));
+                .orElseThrow(() -> new UnauthorizedException("No active subscription found for user"));
         return subscription.getPlan().getMaxProjects() >
                 currentUser.getProjects()
                         .stream()

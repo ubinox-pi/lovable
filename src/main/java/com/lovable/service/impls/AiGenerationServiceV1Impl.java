@@ -4,9 +4,12 @@ import com.lovable.dto.chat.ChatRequest;
 import com.lovable.entity.User;
 import com.lovable.exception.custom.ResourceNotFoundException;
 import com.lovable.llm.PromptUtils;
+import com.lovable.llm.advisors.FileTreeContextAdviser;
+import com.lovable.llm.tools.CodeGenerationTools;
 import com.lovable.repository.UserRepository;
 import com.lovable.service.AIGenerationService;
 import com.lovable.service.FileSavingService;
+import com.lovable.service.FileService;
 import com.lovable.util.AppUtils;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +48,7 @@ public class AiGenerationServiceV1Impl implements AIGenerationService {
     private final ChatClient chatClient;
     private final FileSavingService fileSavingService;
     private final UserRepository userRepository;
+    private final FileService fileService;
 
     @Override
     @PreAuthorize("@security.canEditProject(#request.projectId)")
@@ -61,10 +65,17 @@ public class AiGenerationServiceV1Impl implements AIGenerationService {
         User user = userRepository.findById(AppUtils.getCurrentUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
+        FileTreeContextAdviser fileTreeContextAdviser = new FileTreeContextAdviser(fileService, user.getEmail());
+        CodeGenerationTools codeGenerationTools = new CodeGenerationTools(fileService, user.getEmail(), request.getProjectId());
+
         return chatClient.prompt()
                 .system(PromptUtils.CODE_GENERATION_SYSTEM_PROMPT)
                 .user(request.getMessage())
-                .advisors(advisorSpec -> advisorSpec.params(advisorParams))
+                .advisors(advisorSpec -> {
+                    advisorSpec.params(advisorParams);
+                    advisorSpec.advisors(fileTreeContextAdviser);
+                })
+                .tools(codeGenerationTools)
                 .stream()
                 .chatResponse()
                 .doOnNext(response -> {

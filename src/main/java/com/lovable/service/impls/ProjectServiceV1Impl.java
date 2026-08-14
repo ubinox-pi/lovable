@@ -13,6 +13,7 @@ import com.lovable.repository.ProjectMemberRepository;
 import com.lovable.repository.ProjectRepository;
 import com.lovable.repository.UserRepository;
 import com.lovable.service.ProjectService;
+import com.lovable.service.ProjectTemplateService;
 import com.lovable.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +52,7 @@ public class ProjectServiceV1Impl implements ProjectService {
     private final UserRepository userRepository;
     private final ProjectMapper projectMapper;
     private final SubscriptionService subscriptionService;
+    private final ProjectTemplateService projectTemplateService;
 
     @Override
     public List<ProjectDto> getUserAllProject(String email) {
@@ -98,6 +100,8 @@ public class ProjectServiceV1Impl implements ProjectService {
                 .build();
 
         projectMemberRepository.save(projectMember);
+
+        projectTemplateService.initializeProjectFromTemplate(owner, project.getId(), "");
 
         return projectMapper.toProjectDto(project);
     }

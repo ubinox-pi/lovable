@@ -53,4 +53,14 @@ public class SecurityExpressionsConfig {
     public boolean canEditProject(Long projectId) {
         return hasPermission(projectId, ProjectPermission.EDIT);
     }
+
+    public boolean canEditProject(String email, Long projectId) {
+        return hasPermission(email, projectId, ProjectPermission.EDIT);
+    }
+
+    private boolean hasPermission(String email, Long projectId, ProjectPermission permission) {
+        return projectMemberRepository.findRoleByProjectIdAndEmail(projectId, email)
+                .map(role -> role.getPermissionSet().contains(permission))
+                .orElse(false);
+    }
 }
