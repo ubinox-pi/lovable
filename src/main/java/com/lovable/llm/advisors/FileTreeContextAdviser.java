@@ -58,36 +58,42 @@ public class FileTreeContextAdviser implements StreamAdvisor {
         return streamAdvisorChain.nextStream(augmentedChatClientRequest);
     }
 
-    private ChatClientRequest augmentRequestWithFileTree(ChatClientRequest request, Long projectId) {
+    private ChatClientRequest augmentRequestWithFileTree(
+            ChatClientRequest request,
+            Long projectId
+    ) {
+        List<Message> messages =
+                new ArrayList<>(request.prompt().getInstructions());
 
-        List<Message> incomingMessage = request.prompt().getInstructions();
+        boolean fileTreeAlreadyPresent = messages.stream()
+                .filter(message -> message.getMessageType() == MessageType.SYSTEM)
+                .map(Message::getText)
+                .anyMatch(text -> text.contains("----FILE TREE----"));
 
-        List<Message> systemMessage = incomingMessage.stream()
-                .filter(m -> m.getMessageType() == MessageType.SYSTEM)
-                .toList();
+        if (fileTreeAlreadyPresent) {
+            return request;
+        }
 
-        List<Message> userMessage = new ArrayList<>(incomingMessage.stream()
-                .filter(m -> m.getMessageType() == MessageType.USER)
-                .toList());
-
-        List<Message> allMessage = new ArrayList<>();
-
-        if (!systemMessage.isEmpty())
-            allMessage.addAll(systemMessage);
-
-        FileTreeResponse fileTree = fileService.getFileTree(email, projectId);
+        FileTreeResponse fileTree =
+                fileService.getFileTree(email, projectId);
 
         String fileTreeContext = """
                 ----FILE TREE----
-                """ + fileTree.toString() + """
-                """;
+                %s
+                """.formatted(fileTree);
 
-        allMessage.add(new SystemMessage(fileTreeContext));
+        int insertIndex = 0;
 
-        allMessage.addAll(userMessage);
+        while (insertIndex < messages.size()
+                && messages.get(insertIndex).getMessageType() == MessageType.SYSTEM) {
+            insertIndex++;
+        }
+
+        messages.add(insertIndex, new SystemMessage(fileTreeContext));
+
         return request
                 .mutate()
-                .prompt(new Prompt(allMessage, request.prompt().getOptions()))
+                .prompt(new Prompt(messages, request.prompt().getOptions()))
                 .build();
     }
 

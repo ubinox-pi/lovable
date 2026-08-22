@@ -19,19 +19,20 @@ package com.lovable.controller;
  *
  */
 
+import com.lovable.dto.chat.ChatMessageResponse;
 import com.lovable.dto.chat.ChatRequest;
 import com.lovable.service.AIGenerationService;
+import com.lovable.service.ChatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,6 +40,7 @@ import reactor.core.publisher.Flux;
 public class ChatController {
 
     private final AIGenerationService aiGenerationService;
+    private final ChatService chatService;
 
     @PostMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<Flux<ServerSentEvent<String>>> streamChat(@RequestBody @Valid ChatRequest request) {
@@ -47,5 +49,10 @@ public class ChatController {
                 .map(data -> ServerSentEvent.<String>builder()
                         .data(data)
                         .build()), HttpStatus.OK);
+    }
+
+    @GetMapping("/projects/{projectId}/history")
+    public ResponseEntity<List<ChatMessageResponse>> getChatHistory(@PathVariable Long projectId) {
+        return new ResponseEntity<>(chatService.getProjectChatHistory(projectId), HttpStatus.OK);
     }
 }

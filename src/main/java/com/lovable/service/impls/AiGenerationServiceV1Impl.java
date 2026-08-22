@@ -1,12 +1,15 @@
 package com.lovable.service.impls;
 
 import com.lovable.dto.chat.ChatRequest;
-import com.lovable.entity.User;
+import com.lovable.entity.*;
+import com.lovable.enums.ChatEventType;
+import com.lovable.enums.MessageRole;
 import com.lovable.exception.custom.ResourceNotFoundException;
+import com.lovable.llm.LlmResponseParser;
 import com.lovable.llm.PromptUtils;
 import com.lovable.llm.advisors.FileTreeContextAdviser;
 import com.lovable.llm.tools.CodeGenerationTools;
-import com.lovable.repository.UserRepository;
+import com.lovable.repository.*;
 import com.lovable.service.AIGenerationService;
 import com.lovable.service.FileSavingService;
 import com.lovable.service.FileService;
@@ -19,7 +22,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -49,12 +55,17 @@ public class AiGenerationServiceV1Impl implements AIGenerationService {
     private final FileSavingService fileSavingService;
     private final UserRepository userRepository;
     private final FileService fileService;
+    private final ChatSessionRepository chatSessionRepository;
+    private final ProjectRepository projectRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final LlmResponseParser llmResponseParser;
+    private final ChatEventRepository chatEventRepository;
 
     @Override
     @PreAuthorize("@security.canEditProject(#request.projectId)")
     public Flux<String> streamChat(ChatRequest request) {
         String email = AppUtils.getCurrentUserEmail();
-        createChatSessionIfNotExists(request.getProjectId());
+        ChatSession chatSession = createChatSessionIfNotExists(request.getProjectId());
 
         Map<String, Object> advisorParams = Map.of(
                 "email", email,
@@ -68,6 +79,9 @@ public class AiGenerationServiceV1Impl implements AIGenerationService {
         FileTreeContextAdviser fileTreeContextAdviser = new FileTreeContextAdviser(fileService, user.getEmail());
         CodeGenerationTools codeGenerationTools = new CodeGenerationTools(fileService, user.getEmail(), request.getProjectId());
 
+        AtomicReference<Long> startTime = new AtomicReference<>(System.currentTimeMillis());
+        AtomicReference<Long> endTime = new AtomicReference<>(0L);
+
         return chatClient.prompt()
                 .system(PromptUtils.CODE_GENERATION_SYSTEM_PROMPT)
                 .user(request.getMessage())
@@ -80,16 +94,21 @@ public class AiGenerationServiceV1Impl implements AIGenerationService {
                 .chatResponse()
                 .doOnNext(response -> {
                     log.info("Received response: {}", response);
+                    String content = Objects.requireNonNull(response.getResult()).getOutput().getText();
                     if (response.getResult() == null) {
                         log.warn("Received null result in response for projectId: {}", request.getProjectId());
                         return;
                     }
-                    fullResponseBuffer.append(response.getResult().getOutput().getText());
+                    fullResponseBuffer.append(content);
+                    if (content != null && !content.isEmpty() && endTime.get() == 0L)
+                        endTime.set(System.currentTimeMillis());
                 })
                 .doOnComplete(() -> {
                     log.info("Chat streaming completed for projectId: {}", request.getProjectId());
                     log.debug("Full response buffer: {}", fullResponseBuffer);
-                    fileSavingService.parseAndSaveFile(user, fullResponseBuffer.toString(), request.getProjectId());
+//                    fileSavingService.parseAndSaveFile(user, fullResponseBuffer.toString(), request.getProjectId());
+                    long duration = (endTime.get() - startTime.get()) / 1000;
+                    finalizeChats(user, request.getMessage(), chatSession, fullResponseBuffer.toString(), duration);
                 })
                 .doOnError(error -> log.error("Error during chat streaming for projectId: {}, error: {}", request.getProjectId(), error.getMessage()))
                 .mapNotNull(response -> {
@@ -99,6 +118,57 @@ public class AiGenerationServiceV1Impl implements AIGenerationService {
 
     }
 
-    private void createChatSessionIfNotExists(@NotNull(message = "Project ID cannot be null") Long projectId) {
+    private ChatSession createChatSessionIfNotExists(@NotNull(message = "Project ID cannot be null") Long projectId) {
+        ChatSessionId chatSessionId = new ChatSessionId(AppUtils.getCurrentUserId(), projectId);
+        AtomicReference<ChatSession> chatSession = new AtomicReference<>();
+        chatSessionRepository.findById(chatSessionId)
+                .ifPresentOrElse(chatSession::set, () -> {
+                            Project project = projectRepository.findById(projectId)
+                                    .orElseThrow(() -> new ResourceNotFoundException("Project not found with id " + projectId));
+                            User user = userRepository.getReferenceById(AppUtils.getCurrentUserId());
+
+                            chatSession.set(ChatSession.builder()
+                                    .id(chatSessionId)
+                                    .project(project)
+                                    .user(user)
+                                    .build());
+
+                            chatSession.set(chatSessionRepository.save(chatSession.get()));
+                        }
+                );
+        return chatSession.get();
+    }
+
+    private void finalizeChats(User user, String userMessage, ChatSession chatSession, String fullText, long duration) {
+
+        Long projectId = chatSession.getProject().getId();
+
+        chatMessageRepository.save(ChatMessage.builder()
+                .chatSession(chatSession)
+                .content(userMessage)
+                .role(MessageRole.USER)
+                .build());
+
+        ChatMessage assistantChatMessage = ChatMessage.builder()
+                .chatSession(chatSession)
+                .role(MessageRole.ASSISTANT)
+                .content("Assistant Message here...")
+                .build();
+
+        assistantChatMessage = chatMessageRepository.save(assistantChatMessage);
+
+        List<ChatEvent> chatEventList = llmResponseParser.parseChatEvent(fullText, assistantChatMessage);
+        chatEventList.addFirst(ChatEvent.builder()
+                .chatEventType(ChatEventType.THOUGHT)
+                .chatMessage(assistantChatMessage)
+                .content("Thought for " + duration + "s")
+                .sequenceOrder(0)
+                .build());
+
+        chatEventList.stream()
+                .filter(e -> e.getChatEventType() == ChatEventType.FILE_EDIT)
+                .forEach(e -> fileSavingService.parseAndSaveFile(user, e.getContent(), projectId));
+
+        chatEventRepository.saveAll(chatEventList);
     }
 }

@@ -25,6 +25,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -45,12 +47,17 @@ public class ChatMessage {
     })
     private ChatSession chatSession;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String content;
+    @Column(columnDefinition = "TEXT")
+    private String content; // null unless USER role
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MessageRole role;
+
+    @OneToMany(mappedBy = "chatMessage", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("sequenceOrder ASC")
+    @Builder.Default
+    private List<ChatEvent> chatEvents = new ArrayList<>();
 
     private String toolsCalls;
 
