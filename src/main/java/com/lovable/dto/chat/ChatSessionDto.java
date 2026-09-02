@@ -1,10 +1,4 @@
-package com.lovable.repository;
-
-import com.lovable.entity.Plan;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-import java.util.List;
+package com.lovable.dto.chat;
 
 /*
  * Copyright (c) 2026 Ramjee Prasad
@@ -12,9 +6,9 @@ import java.util.List;
  * See the LICENSE file in the project root for full license information.
  *
  * Project: lovable
- * Package: com.lovable.repository
- * Created by: Ashish Kushwaha on 24-07-2026 12:23
- * File: PlanRepository
+ * Package: com.lovable.dto.chat
+ * Created by: Ashish Kushwaha on 29-08-2026 18:49
+ * File: ChatSessionDto
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -25,7 +19,25 @@ import java.util.List;
  *
  */
 
-@Repository
-public interface PlanRepository extends JpaRepository<Plan, Long> {
-    List<Plan> getPlanByPrice(Integer price);
+import com.lovable.dto.auth.UserDto;
+import com.lovable.dto.project.ProjectDto;
+import com.lovable.entity.ChatSessionId;
+import lombok.Builder;
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+@Data
+@Builder
+public class ChatSessionDto {
+    private ChatSessionId id;
+
+    private ProjectDto project;
+
+    private UserDto user;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
 }

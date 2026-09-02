@@ -22,6 +22,10 @@ import com.lovable.dto.subscription.UsageTodayResponse;
  *
  */
 public interface UsageService {
+    Void recordDailyTokenUsage(String email, int actualToken);
+
+    Void checkDailyTokenUsage(String email);
+
     UsageTodayResponse getTodayUsage(String email);
 
     PLanLimitsResponse getPlanLimits(String email);

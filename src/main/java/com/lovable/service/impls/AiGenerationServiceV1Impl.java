@@ -13,11 +13,13 @@ import com.lovable.repository.*;
 import com.lovable.service.AIGenerationService;
 import com.lovable.service.FileSavingService;
 import com.lovable.service.FileService;
+import com.lovable.service.UsageService;
 import com.lovable.util.AppUtils;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.metadata.Usage;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -60,11 +62,13 @@ public class AiGenerationServiceV1Impl implements AIGenerationService {
     private final ChatMessageRepository chatMessageRepository;
     private final LlmResponseParser llmResponseParser;
     private final ChatEventRepository chatEventRepository;
+    private final UsageService usageService;
 
     @Override
     @PreAuthorize("@security.canEditProject(#request.projectId)")
     public Flux<String> streamChat(ChatRequest request) {
         String email = AppUtils.getCurrentUserEmail();
+        usageService.checkDailyTokenUsage(email);
         ChatSession chatSession = createChatSessionIfNotExists(request.getProjectId());
 
         Map<String, Object> advisorParams = Map.of(
@@ -81,6 +85,7 @@ public class AiGenerationServiceV1Impl implements AIGenerationService {
 
         AtomicReference<Long> startTime = new AtomicReference<>(System.currentTimeMillis());
         AtomicReference<Long> endTime = new AtomicReference<>(0L);
+        AtomicReference<Usage> usageRef = new AtomicReference<>();
 
         return chatClient.prompt()
                 .system(PromptUtils.CODE_GENERATION_SYSTEM_PROMPT)
@@ -99,6 +104,9 @@ public class AiGenerationServiceV1Impl implements AIGenerationService {
                         log.warn("Received null result in response for projectId: {}", request.getProjectId());
                         return;
                     }
+
+                    usageRef.set(response.getMetadata().getUsage());
+
                     fullResponseBuffer.append(content);
                     if (content != null && !content.isEmpty() && endTime.get() == 0L)
                         endTime.set(System.currentTimeMillis());
@@ -108,9 +116,14 @@ public class AiGenerationServiceV1Impl implements AIGenerationService {
                     log.debug("Full response buffer: {}", fullResponseBuffer);
 //                    fileSavingService.parseAndSaveFile(user, fullResponseBuffer.toString(), request.getProjectId());
                     long duration = (endTime.get() - startTime.get()) / 1000;
-                    finalizeChats(user, request.getMessage(), chatSession, fullResponseBuffer.toString(), duration);
+                    finalizeChats(user, request.getMessage(), chatSession, fullResponseBuffer.toString(), duration, usageRef.get());
                 })
-                .doOnError(error -> log.error("Error during chat streaming for projectId: {}, error: {}", request.getProjectId(), error.getMessage()))
+                .doOnError(error -> {
+                    log.error("Error during chat streaming for projectId: {}, error: {}", request.getProjectId(), error.getMessage());
+
+                    long duration = (endTime.get() - startTime.get()) / 1000;
+                    finalizeChats(user, request.getMessage(), chatSession, fullResponseBuffer.toString(), duration, usageRef.get());
+                })
                 .mapNotNull(response -> {
                     if (response.getResult() == null) return null;
                     return response.getResult().getOutput().getText();
@@ -139,20 +152,27 @@ public class AiGenerationServiceV1Impl implements AIGenerationService {
         return chatSession.get();
     }
 
-    private void finalizeChats(User user, String userMessage, ChatSession chatSession, String fullText, long duration) {
+    private void finalizeChats(User user, String userMessage, ChatSession chatSession, String fullText, long duration, Usage usage) {
 
         Long projectId = chatSession.getProject().getId();
+
+        if (usage != null) {
+            int totalTokens = usage.getTotalTokens();
+            usageService.recordDailyTokenUsage(user.getEmail(), totalTokens);
+        }
 
         chatMessageRepository.save(ChatMessage.builder()
                 .chatSession(chatSession)
                 .content(userMessage)
                 .role(MessageRole.USER)
+                .tokensUsed(usage != null ? usage.getPromptTokens() : 0)
                 .build());
 
         ChatMessage assistantChatMessage = ChatMessage.builder()
                 .chatSession(chatSession)
                 .role(MessageRole.ASSISTANT)
                 .content("Assistant Message here...")
+                .tokensUsed(usage != null ? usage.getCompletionTokens() : 0)
                 .build();
 
         assistantChatMessage = chatMessageRepository.save(assistantChatMessage);

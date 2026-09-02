@@ -26,6 +26,8 @@ import java.time.LocalDateTime;
 public interface SubscriptionService {
     SubscriptionResponse getCurrentSubscription(String email);
 
+    Void activateSubscription(String subscriptionId);
+
     Void updateSubscription(String subscriptionId, SubscriptionStatus status, LocalDateTime periodStart, LocalDateTime periodEnd, Boolean isActive);
 
     Void cancelSubscription(String subscriptionId);

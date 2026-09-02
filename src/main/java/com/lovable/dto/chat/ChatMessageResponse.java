@@ -19,7 +19,6 @@ package com.lovable.dto.chat;
  *
  */
 
-import com.lovable.entity.ChatSession;
 import com.lovable.enums.MessageRole;
 import lombok.Builder;
 import lombok.Data;
@@ -33,7 +32,7 @@ public class ChatMessageResponse {
 
     private Long id;
 
-    private ChatSession chatSession;
+    private ChatSessionDto chatSession;
 
     private String content;
 

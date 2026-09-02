@@ -24,6 +24,7 @@ import com.lovable.dto.auth.UserDto;
 import com.lovable.entity.User;
 import com.lovable.exception.custom.AlreadyExistsException;
 import com.lovable.mapper.UserMapper;
+import com.lovable.repository.SubscriptionRepository;
 import com.lovable.repository.UserRepository;
 import com.lovable.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,6 +55,7 @@ public class AuthServiceV1Impl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
     private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
+    private final SubscriptionRepository subscriptionRepository;
 
     @Override
     public UserDto signup(UserDto userDto) {

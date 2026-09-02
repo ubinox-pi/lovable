@@ -2,9 +2,11 @@ package com.lovable.repository;
 
 import com.lovable.entity.Subscriptions;
 import com.lovable.entity.User;
+import com.lovable.enums.SubscriptionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 /*
@@ -37,4 +39,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscriptions, Lon
     Optional<Subscriptions> findByUserEmailWithActiveSubscriptions(String email);
 
     Optional<Subscriptions> findSubscriptionsBySubscriptionIdAndUser(String subscriptionId, User user);
+
+    List<Subscriptions> getSubscriptionsByUserEmailAndStatus(String userEmail, SubscriptionStatus status);
 }

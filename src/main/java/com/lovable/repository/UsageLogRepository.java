@@ -1,9 +1,9 @@
 package com.lovable.repository;
 
-import com.lovable.entity.Plan;
+import com.lovable.entity.UsageLog;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /*
@@ -13,8 +13,8 @@ import java.util.List;
  *
  * Project: lovable
  * Package: com.lovable.repository
- * Created by: Ashish Kushwaha on 24-07-2026 12:23
- * File: PlanRepository
+ * Created by: Ashish Kushwaha on 02-09-2026 19:32
+ * File: UsageLogRepository
  *
  * This source code is intended for educational and non-commercial purposes only.
  * Redistribution and use in source and binary forms, with or without modification,
@@ -24,8 +24,6 @@ import java.util.List;
  *   - Commercial use is strictly prohibited.
  *
  */
-
-@Repository
-public interface PlanRepository extends JpaRepository<Plan, Long> {
-    List<Plan> getPlanByPrice(Integer price);
+public interface UsageLogRepository extends JpaRepository<UsageLog, Long> {
+    List<UsageLog> findByEmailAndDate(String email, LocalDate date);
 }

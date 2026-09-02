@@ -29,8 +29,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class UsageTodayResponse {
-    private int tokensUsed;
-    private int tokensLimit;
-    private int previewsRunning;
-    private int previewsLimit;
+    private Long tokensUsed;
+    private Long tokensLimit;
+    private Long previewsRunning;
+    private Long previewsLimit;
 }

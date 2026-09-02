@@ -59,6 +59,11 @@ public class SubscriptionServiceV1Impl implements SubscriptionService {
     }
 
     @Override
+    public Void activateSubscription(String subscriptionId) {
+        return null;
+    }
+
+    @Override
     public Void updateSubscription(String subscriptionId, SubscriptionStatus status, LocalDateTime periodStart, LocalDateTime periodEnd, Boolean isActive) {
         return null;
     }

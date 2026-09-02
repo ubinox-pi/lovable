@@ -40,7 +40,7 @@ public class Subscriptions {
     private Long id;
 
     @JoinColumn(name = "user_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;
 
     @JoinColumn(name = "plan_id")

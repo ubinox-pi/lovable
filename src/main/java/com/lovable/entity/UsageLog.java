@@ -19,34 +19,30 @@ package com.lovable.entity;
  *
  */
 
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
+@Table(name = "usage_logs", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"email", "date"})
+})
 public class UsageLog {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private User user;
+    @Column(name = "email", nullable = false)
+    private String email;
 
-    private Project project;
+    private LocalDate date;
 
-    private String action;
-
-    private Integer tokenUsed;
-
-    private Integer durationMs;
-
-    private String metadata;
-
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
+    private Long tokenUsed;
 }

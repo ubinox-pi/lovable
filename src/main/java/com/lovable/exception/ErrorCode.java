@@ -183,6 +183,12 @@ public enum ErrorCode {
             HttpStatus.BAD_GATEWAY,
             "PAYMENT_PROVIDER_ERROR",
             "Payment provider error"
+    ),
+
+    TOO_MANY_REQUESTS(
+            HttpStatus.TOO_MANY_REQUESTS,
+            "TOO_MANY_REQUESTS",
+            "Too many requests"
     );
 
     private final HttpStatus status;

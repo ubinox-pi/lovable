@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.HashMap;
@@ -70,6 +71,20 @@ public class GlobalExceptionHandler {
                                 request
                         )
                 );
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ApiResponse<Void>> handleResponseStatusException(
+            ResponseStatusException ex,
+            HttpServletRequest request) {
+        log.warn("ResponseStatusException: {}", ex.getMessage());
+        return ResponseEntity.status(ex.getStatusCode()).body(
+                ErrorResponseFactory.build(
+                        ErrorCode.TOO_MANY_REQUESTS,
+                        ex.getMessage(),
+                        request
+                )
+        );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
