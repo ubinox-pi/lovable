@@ -19,7 +19,9 @@ package com.lovable.controller;
  *
  */
 
+import com.lovable.dto.deploy.DeployResponse;
 import com.lovable.dto.project.ProjectDto;
+import com.lovable.service.DeploymentService;
 import com.lovable.service.ProjectService;
 import com.lovable.util.AppUtils;
 import jakarta.transaction.Transactional;
@@ -36,6 +38,7 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final DeploymentService deploymentService;
 
     @GetMapping
     public ResponseEntity<List<ProjectDto>> getMyProjects() {
@@ -68,5 +71,10 @@ public class ProjectController {
     public ResponseEntity<Void> deleteProject(@PathVariable Long projectId) {
         String email = AppUtils.getCurrentUserEmail();
         return new ResponseEntity<>(projectService.deleteProject(email, projectId), HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/{projectId}/deploy")
+    public ResponseEntity<DeployResponse> deployProject(@PathVariable Long projectId) {
+        return new ResponseEntity<>(deploymentService.deploy(projectId), HttpStatus.OK);
     }
 }
